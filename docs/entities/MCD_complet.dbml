@@ -18,6 +18,15 @@ Table PCB {
   temps_restant float // remaining time in ms
   cpu_usage int // *importante* need cpu_logs in every instruct we log wich process did it and we sum process divide by total
 
+  statistics process_statistics [ref : > process_statistics.var_name]
+
+  pid_children list(int) // pointeur vers premier element du list des id des process chldren
+  pid_siblings_next int // pointeur vers un next sibling block
+  pid_siblings_previous int // pointeur vers previous sibling block
+}
+
+Table process_statistics {
+  var_name hex // only here not code
   temps_arrive time // quand il etait ajouté au process_table
   temps_creation time // quand la structure etait creer
   temps_execution time // time total needed en ms -> burst time
@@ -25,10 +34,6 @@ Table PCB {
 
   temps_attente float // gap between temps arrive et temps exec
   tournround float // from temps arrive jusqua terminé
-
-  pid_children list(int) // pointeur vers premier element du list des id des process chldren
-  pid_siblings_next int // pointeur vers un next sibling block
-  pid_siblings_previous int // pointeur vers previous sibling block
 }
 
 // pcb helper
