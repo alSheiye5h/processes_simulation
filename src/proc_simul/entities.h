@@ -11,7 +11,12 @@ typedef struct {
 } RESSOURCE;
 
 typedef struct {
-    tm temps_arrive
+    struct tm temps_arrive; // located in time.h
+    struct tm temps_creation;
+    struct tm temps_fin;
+    
+    int temps_attente; // gap entre temps arrive & temps exec
+    int tournround; // temps terminer - temps arrive
 } PROCESS_STATISTICS;
 
 typedef struct {
