@@ -82,8 +82,6 @@ enum {
 
 typedef struct {
     Algorithms algorithm;
-    READY_QUEUE* ready_queue;
-    BLOCKED_QUEUE* blocked_queue; 
     PCB* exec_proc; // processus en train de s'executer
     
     int quantum; // quantum de time pour RR
@@ -91,8 +89,19 @@ typedef struct {
     struct tm end;
     int cpu_time_used; // en ms: end - start
     
-    RESSOURCES_ELEMENT* ressources; // again using malloc to allocate N ressources
 } ORDONNANCEUR;
+
+typedef struct {
+    RESSOURCES_ELEMENT* ressources; // again using malloc to allocate N ressources
+    int ressource_count; // n processus
+} RESSOURCE_MANAGER;
+
+typedef struct {
+    PROCESS_TABLE* process_table;
+    int process_count;
+    READY_QUEUE* ready_queue;
+    BLOCKED_QUEUE* blocked_queue; 
+} PROCESS_MANAGER;
 
 
 
