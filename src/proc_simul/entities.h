@@ -30,7 +30,6 @@ typedef struct {
 } PROCESS_STATISTICS;
 
 typedef struct {
-    int pcb_id;
     int pid;
     char process_name[20];
     char user_id[20];
@@ -56,7 +55,7 @@ typedef struct {
 
 typedef struct {
     int pid; // l identifier du processus
-    int pcb_id; // l id du pcb du processus
+    PCB* pcb; // l id du pcb du processus
 } PROCESS_TABLE;
 
 typedef struct {
