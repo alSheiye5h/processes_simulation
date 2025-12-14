@@ -3,15 +3,6 @@
 #include <time.h>
 
 
-
-
-// decalaration des types de fonctions
-
-
-
-
-
-
 typedef enum {
     READY, BLOCKED, EXECUTION, TERMINATED
 } E_etat;
