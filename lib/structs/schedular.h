@@ -1,8 +1,8 @@
 #pragma once
 
-#include "process.h" // for pcb
-#include "simulator.h" // for SIMULATOR
-#include "execution_queue.h" // for the exec queue
+#include "structs/process.h" // for pcb
+#include "structs/simulator.h" // for SIMULATOR
+#include "structs/execution_queue.h" // for the exec queue
 
 typedef enum {
     RR, SRTF, PPP, FCFS, SJF

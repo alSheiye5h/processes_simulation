@@ -24,7 +24,7 @@ typedef struct {
 
     //functions
     // on start
-    RESSOURCE_LIST* (*create_ressource_list)();
+    RESSOURCES_LIST* (*create_ressource_list)();
 
     // ressources operations
     RESSOURCE_ELEMENT* (*look_for_ressource_in_list)(char* ressource_name);

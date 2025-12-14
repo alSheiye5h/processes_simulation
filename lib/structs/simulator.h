@@ -1,8 +1,8 @@
 #pragma once
 
-#include "process_manager.h"
-#include "schedular.h"
-#include "ressource_manager.h"
+#include "structs/process_manager.h"
+#include "structs/schedular.h"
+#include "structs/ressource_manager.h"
 
 
 typedef struct {
