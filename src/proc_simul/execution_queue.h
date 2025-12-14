@@ -20,4 +20,8 @@ typedef struct {
     INSTRUCTION* current_instruction; // l instruction en train de s'executer
     PCB* current_process; // process en train de s'executer
     int process_id; // l'pid du current process
+
+    //function
+    EXECUTION_QUEUE_RESPONSE* (*execute_instruction) (INSTRUCTION instruction);
+
 } EXECUTION_QUEUE;
