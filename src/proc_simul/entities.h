@@ -122,6 +122,19 @@ typedef struct {
     BLOCKED_QUEUE* blocked_queue; // pointer to blocked
 } PROCESS_MANAGER;
 
+
+typedef struct {
+    float cpu_total_temps_usage; // somme temps cpu occup total de tout process 
+    float cpu_temps_unoccuped; // temps total ou cpu n etait pas utilisé
+    int context_switch; // nombre total de changement de processus
+    float total_temps_attente; // somme temps waiting de tout processus
+
+    // when process is terminated
+    float total_turnround; // somme de tout processus (temps termine - temps arrive)
+    int processus_termine_count; // processus terminé
+    float troughtput; // processus terminé / total temps en ms
+} ORDONNANCEUR_STATISTICS;
+
 typedef struct {
     ORDONNANCEUR* schedular; // pointeur vers lordonnanceur
     PROCESS_MANAGER* process_manager; // pointeur to process manaer

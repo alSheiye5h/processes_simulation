@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.7">
+  <diagram name="Page-1" id="5m9KIoFa2EQuls5evQ_o">
+    <mxGraphModel dx="5265" dy="2063" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bS9e5X98l1zNabWraRsN-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;process manager&lt;/font&gt;&lt;/b&gt;&lt;div&gt;-process count&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="130" x="180" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;b&gt;process table&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="500" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;ready queue&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-4" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="420" as="sourcePoint" />
+            <mxPoint x="260" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;blocked queue&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="340" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-8" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;&lt;b&gt;simulator&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="100" width="100" x="-200" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-9" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-1" style="endArrow=none;html=1;rounded=0;exitX=0.923;exitY=0.2;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.273;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="bS9e5X98l1zNabWraRsN-2" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="480" y="450" as="sourcePoint" />
+            <mxPoint x="530" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="only element that interact with process table&lt;div style=&quot;&quot;&gt;-- iterat over table to get first came (arg: table pointer)&amp;nbsp;&lt;font style=&quot;color: rgb(255, 30, 30);&quot;&gt;return pointer to pcb_list&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;-- iterate over table to get short remaining time (arg: table pointer, remaining time to compare )&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 30, 30);&quot;&gt;return pointer to pcb_list&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;-- iterate over table to get short burst(arg: table pointer)&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 30, 30);&quot;&gt;return pointer to pcb_list&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;-- iterate over table to get priority&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(arg: table pointer)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 30, 30);&quot;&gt;return pointer to pcb_list&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;-- iterate over table to get priority(arg:&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;table pointer,&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;priority to compare)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 30, 30);&quot;&gt;return pointer to pcb&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="1000" x="396.36" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-11" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-1" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0.254;exitY=0.089;exitDx=0;exitDy=0;exitPerimeter=0;" target="bS9e5X98l1zNabWraRsN-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="320" y="460" as="sourcePoint" />
+            <mxPoint x="290" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-12" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-7" style="endArrow=none;html=1;rounded=0;exitX=0.64;exitY=0.042;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;exitPerimeter=0;" target="bS9e5X98l1zNabWraRsN-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="140" y="550" as="sourcePoint" />
+            <mxPoint x="190" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="-- move to blocked (args: ressource pointer )&lt;span style=&quot;color: rgb(255, 36, 30);&quot;&gt;&amp;nbsp;return bool&lt;/span&gt;&lt;div&gt;--check every 1ms if ressource are available&lt;span style=&quot;color: rgb(255, 36, 30); background-color: transparent;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(255, 36, 30); background-color: transparent;&quot;&gt;return bool&lt;/span&gt;&lt;/div&gt;&lt;div&gt;--delete from blocked queue(arg: pid)&lt;font style=&quot;color: rgb(255, 36, 30);&quot;&gt; return bool&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="320" x="460" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="--move single to ready queue(arg: pid) &lt;font style=&quot;color: rgb(255, 32, 32);&quot;&gt;return bool&lt;/font&gt;&lt;div&gt;--move list to ready queue(arg: list pid)&amp;nbsp;&lt;span style=&quot;color: rgb(255, 32, 32); background-color: transparent;&quot;&gt;return bool&lt;/span&gt;&lt;/div&gt;&lt;div&gt;--delete from ready queue(arg: pid)&amp;nbsp;&lt;span style=&quot;color: rgb(255, 32, 32); background-color: transparent;&quot;&gt;return bool&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="280" x="410" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;b&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;pcb&lt;/font&gt;&lt;/b&gt;" vertex="1">
+          <mxGeometry height="50" width="90" x="96.36" y="284.3" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-16" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-15" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points" />
+            <mxPoint x="676.36" y="324.3" as="sourcePoint" />
+            <mxPoint x="399.9999999999999" y="270.00000000000006" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="--mark process terminated (arg: pointeur pcb) &lt;font style=&quot;color: rgb(255, 2, 2);&quot;&gt;r&lt;font style=&quot;color: rgb(255, 86, 86);&quot;&gt;eturn bool&lt;/font&gt;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;--update temp_arrive(arg: pointeur pcb)&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: rgb(255, 2, 2);&quot;&gt;r&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 86, 86);&quot;&gt;eturn bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;--update temps fin (arg: pointeur pcb)&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: rgb(255, 2, 2);&quot;&gt;r&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 86, 86);&quot;&gt;eturn bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 86, 86);&quot;&gt;&lt;div style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;color: rgb(0, 102, 0);&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;-update&amp;nbsp; cpu_temps_usage, remaining time&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));&quot;&gt;(arg: pcb)&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(204, 0, 0), rgb(237, 237, 237));&quot;&gt;return bool&lt;/font&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(0, 0, 0);&quot;&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;--update all [when process terminated] (arg: pcb)&amp;nbsp;&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(204, 0, 0), rgb(255, 255, 255));&quot;&gt;return bool&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="706.36" x="-310" y="354.3" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;ressources manager&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;ressource count&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="210" x="170" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;ressources list&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="620" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-20" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-18" style="endArrow=none;html=1;rounded=0;exitX=0.985;exitY=0.333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bS9e5X98l1zNabWraRsN-19" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="310" y="910" as="sourcePoint" />
+            <mxPoint x="360" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="--load all ressource to the table(arg: csv file) &lt;font style=&quot;color: rgb(255, 12, 12);&quot;&gt;return bool&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;--mark ressource available(arg: ressource)&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 12, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;--mark ressource unavailable(arg: ressource)&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 12, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;--check if ressource available(arg: ressource)&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 12, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="580" x="390" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-26" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;ordonnanceur&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font&gt;quantum_temps&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="150" x="-760" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-37" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-8" style="endArrow=classic;html=1;rounded=0;entryX=1.018;entryY=0.376;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-26" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-425" y="480" as="sourcePoint" />
+            <mxPoint x="-375" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-38" connectable="0" parent="bS9e5X98l1zNabWraRsN-37" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="start(arg:ready queue pointer, quantum, pcb*)&amp;nbsp;&lt;font style=&quot;color: rgb(255, 9, 9);&quot;&gt;return bool&lt;/font&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.2327" y="-1" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-57" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="need ressource function should call the similator inside the ordonnancer and make it look for ressource and return result" vertex="1">
+          <mxGeometry height="30" width="300" x="-1370" y="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-72" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-8" style="endArrow=classic;html=1;rounded=0;entryX=0.077;entryY=0.2;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-1" value="start">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-210" y="690" as="sourcePoint" />
+            <mxPoint x="10" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bS9e5X98l1zNabWraRsN-73" edge="1" parent="1" source="bS9e5X98l1zNabWraRsN-8" style="endArrow=classic;html=1;rounded=0;entryX=0.062;entryY=0.736;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=1;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-18" value="start">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-190" y="980" as="sourcePoint" />
+            <mxPoint x="210" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-59" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="SHARED FUNCTION SCHEDULARS" vertex="1">
+          <mxGeometry height="200" width="660" x="-1015" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-58" parent="H1baN1wfFUoaqap1aXgX-59" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 11px;&quot;&gt;--ask for ressources (arg: pcb pointer, ressource) &lt;font style=&quot;color: rgb(255, 27, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;--signal that ressource is free not longer needed (arg: resource)&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 11px;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; font-size: 11px; color: rgb(255, 27, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;--update pcd statistics related to cpu time used [second function uncder pcb] (arg: cpu_time_used, pcb)&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 11px;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; font-size: 11px; color: rgb(255, 27, 12);&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;background-color: transparent; font-size: 11px; color: rgb(255, 27, 12);&quot;&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;--mark&amp;nbsp; process terminated and&amp;nbsp;&lt;/font&gt;&lt;/font&gt;&lt;span style=&quot;font-size: 11px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;temps fin,&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;font-size: 11px; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;tournround&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255)); font-size: 11px;&quot;&gt;&amp;nbsp;in pcd-&amp;gt;statistics&amp;nbsp;&lt;/span&gt;&lt;font style=&quot;background-color: transparent; color: rgb(0, 0, 0); font-size: 11px;&quot;&gt;(arg: temps_fin, pcb)&amp;nbsp;&lt;/font&gt;&lt;font style=&quot;background-color: transparent; color: rgb(255, 27, 12); font-size: 11px;&quot;&gt;return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;color: rgb(0, 102, 0);&quot;&gt;&lt;font style=&quot;background-color: transparent;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;--update total_cpu_usage, cpu_temps_usage, context_switch, total_temps_attente&lt;/span&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(237, 237, 237));&quot;&gt;(arg: pcb) &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(204, 0, 0), rgb(237, 237, 237));&quot;&gt;return bool&lt;/font&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;--update all [when process terminated] (arg: schedular_statistics) &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(204, 0, 0), rgb(255, 255, 255));&quot;&gt;return bool&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="32" width="660" x="1" y="76.00000000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-60" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;--initialize process manager () &lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt;return process_manager*&lt;/font&gt;&lt;br&gt;--initialize roussources_manager () &lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt;return ressource_manager*&lt;/font&gt;&lt;/div&gt;&lt;div&gt;--initialize schedular () &lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt;return schedular*&lt;/font&gt;&lt;/div&gt;&lt;div&gt;--destroy schedular(arg: schedular*) &lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt;return bool&amp;nbsp;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;--destroy res_manager (arg: res_manag*)&lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt; return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;--destroy proces_manager (arg: proces_manag*)&lt;font style=&quot;color: rgb(204, 0, 0);&quot;&gt; return bool&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="370" x="-93.63999999999999" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-62" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="&lt;b&gt;ordonnanceur statistics&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="170" x="-1220" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-64" edge="1" parent="1" source="H1baN1wfFUoaqap1aXgX-62" style="endArrow=none;html=1;rounded=0;entryX=0.023;entryY=0.646;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="bS9e5X98l1zNabWraRsN-26" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-1030" y="620" as="sourcePoint" />
+            <mxPoint x="-1000" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-94" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="srtf" vertex="1">
+          <mxGeometry height="200" width="660" x="-1015" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="H1baN1wfFUoaqap1aXgX-95" parent="H1baN1wfFUoaqap1aXgX-94" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 11px;&quot;&gt;--ask for to sort by remaining time () return bool [mais dooit update remaining time dabord]&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 11px;&quot;&gt;--ask for to sort by priority () return bool&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;font-size: 11px;&quot;&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="32" width="660" x="1" y="76.00000000000001" as="geometry" />
+        </mxCell>
+        <mxCell id="UF_Frdmk8z9FfkLi9C8A-2" parent="1" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;" value="execution queue&lt;div&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;-ressource of previous instruct&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="170" x="-930" y="334.3" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
