@@ -1,0 +1,69 @@
+#pragma once
+
+
+
+
+enum {
+    READY, BLOCKED, EXECUTION, TERMINATED
+} E_etat;
+
+enum {
+    // ressources
+} RESSOURCE;
+
+typedef struct {
+    char* ressource_name[10]; // nom de ressource
+    RESSOURCE* ressource; // type ooubien l enum
+    bool disponibilite; // dispo ou non 1 / 0
+} RESSOURCES_ELEMENT;
+
+enum {
+    // should define types
+} INSTRUCTION_TYPE; // ressources
+
+enum {
+    NOT_STARTED, EXECUTING, BLOCKED, COMPLETED
+} INSTRUCTION_STATE;
+
+typedef struct {
+    uint32_t instruct_id; // the id of instruction because process can stop at it if need ressources 
+    int process_it; // the id of the process owner
+
+    float time_remaining; // in nano seconds
+    INSTRUCTION_TYPE* type; // type of instruction which is ressource needed
+    INSTRUCTION_STATE* state; // state of instruction 
+} INSTRUCTION;
+
+typedef struct {
+    struct tm temps_arrive; // located in time.h
+    struct tm temps_creation;
+    struct tm temps_fin;
+    
+    int temps_attente; // gap entre temps arrive & temps exec
+    int tournround; // temps terminer - temps arrive
+} PROCESS_STATISTICS;
+
+typedef struct {
+    int pid;
+    char process_name[20];
+    char user_id[20];
+    int ppid;
+    E_etat etat; // one of the values in the enum e_etat
+    int prioritie; // priorities from 1 to 5 ; 1-critical
+
+    INSTRUCTION* instructions;
+    long programme_compteur; // max 9,223,372,036,854,775,807 instruction
+    int memoire_necessaire; // en MB
+    INSTRUCTION* current_instruction; // l'instruction en train de s executer
+
+    int burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant
+    int cpu_time_used; // temps cpu consomme en ms init 0
+    int remaining_time; // temps restant : = burst - cpu_time_used
+    long cpu_usage; // 
+
+    PROCESS_STATISTICS statistics;
+
+    int* pid_childrens;
+    PCB* pid_sibling_next; // pointeur vers next sib
+    PCB* pid_sibling_previous; // pointeur vers previous sib
+} PCB;
