@@ -96,7 +96,10 @@ Table ressources_element { // enum in dbml because mkatsupportech creation d LIS
 }
 
 Table ressources_list { // a simple list table just for dbml
-  element resources_element [ref: > ressources_element.var_adress]
+  var_adress hex //only here
+  head pointeurRessource_elemnt [ref : > ressources_element.var_adress]
+  tail pointeurRessource_element [ref : > ressources_element.var_adress]
+  size int
 }
 
 Table blocked_queue_elemnt {
@@ -167,7 +170,7 @@ Table ordonnanceur_statistics {
 
 Table ressource_manager {
   var_adress hex // only in mcd
-  ressources ressources_list [ref : > ressources_list.element]
+  ressources ressources_list [ref : > ressources_list.var_adress]
   ressource_count int
 } 
 

@@ -6,5 +6,4 @@ typedef struct {
     RESSOURCE_MANAGER* ressource_manager; // pointeur vers ressource
     int simulation_time;
     bool runing;
-    
 } SIMULATOR;

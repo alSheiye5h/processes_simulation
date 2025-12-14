@@ -13,11 +13,11 @@ enum {
 } INSTRUCTION_STATE;
 
 typedef struct {
-    uint32_t instruct_id; // the id of instruction because process can stop at it if need ressources 
+    uint32_t* instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
     int process_it; // the id of the process owner
 
     float time_remaining; // in nano seconds
-    RESSOURCES_ELEMENT* type; // type of instruction which is ressource needed
+    RESSOURCE_ELEMENT* type; // type of instruction which is ressource needed
     INSTRUCTION_STATE* state; // state of instruction 
 } INSTRUCTION;
 
@@ -48,7 +48,7 @@ typedef struct {
     int remaining_time; // temps restant : = burst - cpu_time_used
     long cpu_usage; // 
 
-    PROCESS_STATISTICS statistics;
+    PROCESS_STATISTICS* statistics; 
 
     int* pid_childrens;
     PCB* pid_sibling_next; // pointeur vers next sib

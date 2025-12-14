@@ -1,6 +1,7 @@
 #pragma once
 
 #include "process.h" // for PCB struct
+#include "ressource_manager.h" // for RESSOURCE_ELEMENT
 
 // structures nedded par les fonctions du process_manager
 typedef struct { // used by process manager: many iteraction over process list but obe contact with ready queue for time reducing
@@ -28,7 +29,7 @@ typedef struct { // ordred chaine
 
 typedef struct {
     int pid; // l id processus
-    RESSOURCES_ELEMENT* ressource; // ressource needed to execute the instruction
+    RESSOURCE_ELEMENT* ressource; // ressource needed to execute the instruction
 } BLOCKED_QUEUE_ELEMENT;
 
 typedef struct { // circular chaine
