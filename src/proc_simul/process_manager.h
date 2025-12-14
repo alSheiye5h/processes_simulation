@@ -12,6 +12,7 @@ typedef struct { // used by process manager: many iteraction over process list b
 typedef struct {
     int pid; // l identifier du processus
     PCB* pcb; // l id du pcb du processus
+    bool circular;
 } PROCESS_TABLE;
 
 typedef struct {
@@ -43,4 +44,16 @@ typedef struct {
     int process_count; // n processes
     READY_QUEUE* ready_queue; // pointer to ready chaine
     BLOCKED_QUEUE* blocked_queue; // pointer to blocked
+
+    // functions
+    // on start
+    PROCESS_TABLE* (*create_process_table)(bool circular); // need to be assigned to process_table field and update the process_count field// create a chaine circulaire ou non circular
+    READY_QUEUE* (*create_ready_queue)(int size); // size which is process count field
+    BLOCKED_QUEUE* (*create_blocked_queue)(int size); // will initialize by size 0 i think
+
+
+    char* (*get_all_processus)(FILE* buffer); // should count while retrieving we'll get all process append them to a listn then assign pid,after that we ll push them into process list
+    bool (*push_all_to_process_table)()
+
+
 } PROCESS_MANAGER;

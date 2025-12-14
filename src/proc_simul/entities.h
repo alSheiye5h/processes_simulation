@@ -171,8 +171,6 @@ typedef struct {
 } PROCESS_MANAGER;
 
 
-
-
 typedef struct {
     ORDONNANCEUR* schedular; // pointeur vers lordonnanceur
     PROCESS_MANAGER* process_manager; // pointeur to process manaer
