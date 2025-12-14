@@ -1,5 +1,7 @@
 #pragma once
 
+#include "process.h" // for pcb
+#include "process.h" // for INSTRUCTION
 
 enum {
     RR, SRTF, PPP, FCFS, SJF
@@ -22,7 +24,12 @@ typedef struct {
 
 
 typedef struct {
-    char
+    int id; // l id du composant en train d'executer
+    char name[10]; // name du composant qui execute
+
+    INSTRUCTION* current_instruction; // l instruction en train de s'executer
+    PCB* current_process; // process en train de s'executer
+    int process_id; // l'pid du current process
 
 } EXECUTION_QUEUE;
 
@@ -38,6 +45,7 @@ typedef struct {
     float current_time;
 
     SIMULATOR* simulator; // pointeur vers simulator
+    EXECUTION_QUEUE* in_execution_queue; // pointeur vers queue d'execution
 
     ORDONNANCEUR_STATISTICS statistics; // pointeur vers les statistics du schedular
 } ORDONNANCEUR;

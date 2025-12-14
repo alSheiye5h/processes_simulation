@@ -1,6 +1,6 @@
 #pragma once
 
-#include "process.h"
+#include "process.h" // for PCB struct
 
 // structures nedded par les fonctions du process_manager
 typedef struct { // used by process manager: many iteraction over process list but obe contact with ready queue for time reducing

@@ -1,25 +1,12 @@
 #pragma once
 
 
-
+#include "ressource_manager.h" // for RESSOURCES_ELEMENT
 
 enum {
     READY, BLOCKED, EXECUTION, TERMINATED
 } E_etat;
 
-enum {
-    // ressources
-} RESSOURCE;
-
-typedef struct {
-    char* ressource_name[10]; // nom de ressource
-    RESSOURCE* ressource; // type ooubien l enum
-    bool disponibilite; // dispo ou non 1 / 0
-} RESSOURCES_ELEMENT;
-
-enum {
-    // should define types
-} INSTRUCTION_TYPE; // ressources
 
 enum {
     NOT_STARTED, EXECUTING, BLOCKED, COMPLETED
@@ -30,7 +17,7 @@ typedef struct {
     int process_it; // the id of the process owner
 
     float time_remaining; // in nano seconds
-    INSTRUCTION_TYPE* type; // type of instruction which is ressource needed
+    RESSOURCES_ELEMENT* type; // type of instruction which is ressource needed
     INSTRUCTION_STATE* state; // state of instruction 
 } INSTRUCTION;
 
