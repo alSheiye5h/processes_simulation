@@ -16,7 +16,7 @@ Table PCB {
   memoire_necessaire int // memoire necessaire en mbit
   
   burst_time float // (burst) temps necessaire pour l exec ; burst = compte_temps + temps_restant
-  cpu_time_used float // temps cpu consomme en ms "initialise a 0 increasing bu schedular"
+  cpu_temps_used float // temps cpu consomme en ms "initialise a 0 increasing bu schedular"
   remaining_time float // temps restant en ms (initializer a burs decreasing jusqua 0)
   cpu_usage int // *importante* need cpu_logs in every instruct we log wich process did it and we sum process divide by total
 
@@ -112,6 +112,7 @@ Table ordonnanceur { // which is schedular
   
   current_time float // en ms
   ready_queue ready_queue
+  current_process PCDpointer [ref : > PCB.var_adress] // pointeur du process en execution
   process_table process_table // list des processus
 
   is_runing bool

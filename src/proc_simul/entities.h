@@ -129,6 +129,8 @@ typedef struct {
     int context_switch; // nombre total de changement de processus
     float total_temps_attente; // somme temps waiting de tout processus
 
+    PCB* current_processus; // processus en cours d execution
+
     // when process is terminated
     float total_turnround; // somme de tout processus (temps termine - temps arrive)
     int processus_termine_count; // processus terminé
@@ -141,6 +143,8 @@ typedef struct {
     RESSOURCE_MANAGER* ressource_manager; // pointeur vers ressource
     int simulation_time;
     bool runing;
+
+    ORDONNANCEUR_STATISTICS statistics;
 } SIMULATOR;
 
 /*
