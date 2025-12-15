@@ -21,7 +21,7 @@ typedef struct {
     float time_remaining; // in nano seconds
     RESSOURCE_ELEMENT* type; // type of instruction which is ressource needed
     INSTRUCTION_STATE* state; // state of instruction 
-    INSTRUCTION* next;
+    struct INSTRUCTION* next;
 } INSTRUCTION;
 
 typedef struct {
@@ -54,6 +54,6 @@ typedef struct {
     PROCESS_STATISTICS* statistics; 
 
     int* pid_childrens;
-    PCB* pid_sibling_next; // pointeur vers next sib
-    PCB* pid_sibling_previous; // pointeur vers previous sib
+    struct PCB* pid_sibling_next; // pointeur vers next sib
+    struct PCB* pid_sibling_previous; // pointeur vers previous sib
 } PCB;

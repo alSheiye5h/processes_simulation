@@ -4,10 +4,6 @@
 
 #include "structs/ressource.h"
 
-// typedef struct {
-//     RESSOURCE_ELEMENT* head; // first element in chaine
-//     int size; // how many element in the chaine
-// } RESSOURCES_LIST; // chain ressource because we need size
 
 typedef struct {
     RESSOURCE_ELEMENT* ressources; // again using malloc to allocate N ressources
@@ -15,7 +11,7 @@ typedef struct {
 
     //functions
     // on start
-    RESSOURCES_LIST* (*create_ressource_list)();
+    RESSOURCE_ELEMENT* (*create_ressource_list)(void);
 
     // ressources operations
     RESSOURCE_ELEMENT* (*look_for_ressource_in_list)(char* ressource_name);
@@ -24,3 +20,20 @@ typedef struct {
     RESSOURCE_ELEMENT* (*check_if_ressource_available)(RESSOURCE* ressource); // if available return  if not return 0
     
 } RESSOURCE_MANAGER;
+
+/*
+typedef enum {
+    RES_CPU,
+    RES_MEMORY,
+    RES_DISK,
+    RES_NETWORK,
+    RES_COUNT   // 👈 sentinel
+} RESSOURCE_TYPE;
+Now you can iterate:
+
+c
+Copy code
+for (int r = 0; r < RES_COUNT; r++) {
+    // initialize resource r
+}
+*/

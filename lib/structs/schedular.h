@@ -47,7 +47,7 @@ typedef struct {
     EXECUTION_QUEUE* (*create_execution_queue)();
     ORDONNANCEUR_STATISTICS* (*create_statistics)();
 
-    // ordonnanceur to simulator
+    // ordonnanceur to simulator (using bool for simplicity)
     bool (*need_ressources)(RESSOURCE_ELEMENT* ressource_needed); // return 1 if ressource is available marked unavailable
     bool (*ressource_is_free)(RESSOURCE_ELEMENT* ressource); // return 1 if ressource succesfully free (for error handling)
     bool (*update_cpu_time_used)(PCB* process, float inc); // shoudld declancher calcul remaining time inc the value to add to time, because can only increasing not decreasing
