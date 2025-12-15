@@ -41,13 +41,14 @@ typedef struct {
     float time_remaining; // in nano seconds
     RESSOURCE_ELEMENT* type; // type of instruction which is ressource needed
     INSTRUCTION_STATE* state; // state of instruction 
+    INSTRUCTION* next;
 } INSTRUCTION;
 
 buffer_return* extract_from_buffer(FILE* csv_buffer) {
     
     int count = 0;
 
-    char line_pcb[10000];
+    char line_pcb[70000];
     while(fgets(line_pcb, sizeof(buffer), csv_buffer)) { // dont forget temps creation
         
 
@@ -86,7 +87,7 @@ parser_return* parser(char* line) {
     int char_count = 0;
     int value_number = 0;
     char value[100];
-    for(int i = 0; i < 10000;i++) { // instructions_count
+    for(int i = 0; i < 10000;i++) { // line_size
         if (line[i] != ',') {
             value[char_count] = line[i];
             char_count++;
@@ -94,7 +95,7 @@ parser_return* parser(char* line) {
             switch (value_number) {
                 case 0:
                     if (sizeof(value) > 20) {
-                        printf("ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in process_name\n");
+                        printf("ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in process_name\n", line);
                         exit(1);
                     }
                     (value > 20) ? 
@@ -102,14 +103,14 @@ parser_return* parser(char* line) {
                     break;    
                 case 1:
                     if (sizeof(value) > 20) {
-                        printf("ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in user_id\n");
+                        printf("ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in user_id\n", line);
                         exit(1);
                     }
                     parsed_line->user_id = value;
                     break;    
                 case 2:
                     if (value > 5 || value < 1) {
-                        printf("ERROR ON: parser function process line in csv '%s' \npriority out of range(1-5)\n");
+                        printf("ERROR ON: parser function process line in csv '%s' \npriority out of range(1-5)\n", line);
                         exit(1);
                     }
                     parsed_line->priority = atoi(value); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
@@ -127,13 +128,13 @@ parser_return* parser(char* line) {
             memset(value, 0, sizeof(value)); // setting all the bytes in memory will make it equivalent to empty string
 
             if (value_number > 6) {
-                printf("ERROR ON: parser function (csv file data unvalid)");
+                printf("ERROR ON: parser function (csv file data unvalid)", line);
                 exit(1);
             }
         } else if (line[i] == '\n') {
             break;
         } else {
-            printf("ERROR ON: parser function");
+            printf("ERROR ON: parser function", line);
             exit(1);
         }
     }
@@ -146,6 +147,27 @@ typedef struct {
     int size;
 } insruction_parser_return;
 
-insruction_parser_return* instruction_parser(char* value) {
+insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name
+    
+    char* instructions[20000];
+    int instruction_count;
+    char instruction[3];
 
+    int char_count = 0;
+    int instruct_count = 0;
+    for (int i = 1; i < 20000; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
+        if (value[char_count] != ',' && instruct_count < 3) {
+            instruction[instruct_count] = value[char_count];
+            instruct_count++;
+        } else if ((value[char_count] == ',' || instruct_count > 2) && instruct_count > 0) { // for checking unvalid instruction
+            instruction_count++;
+            instruct_count = 0;
+            instructions[instruct_count] = instruction;
+        } else if (value[char_count] == ']') {
+            break;
+        } else {
+            printf("ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction\n", value);
+            exit(1);
+        }
+    }
 }

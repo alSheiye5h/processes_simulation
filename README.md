@@ -1,3 +1,3 @@
 compiler flag: -Ilib
 
-search instructions_count if you want to modify instruction count
+search line_size instruction_count if you want to modify instruction count or line size
