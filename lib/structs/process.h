@@ -28,11 +28,11 @@ typedef struct {
     struct tm temps_creation;
     struct tm temps_fin;
     
-    int temps_attente; // gap entre temps arrive & temps exec
+    float temps_attente; // gap entre temps arrive & temps exec
     int tournround; // temps terminer - temps arrive
 } PROCESS_STATISTICS;
 
-struct {
+typedef struct {
     int pid;
     char process_name[20];
     char user_id[20];
@@ -46,9 +46,9 @@ struct {
     INSTRUCTION* current_instruction; // l'instruction en train de s executer
 
     int burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant
-    int cpu_time_used; // temps cpu consomme en ms init 0
+    float cpu_time_used; // temps cpu consomme en ms init 0
     int remaining_time; // temps restant : = burst - cpu_time_used
-    long cpu_usage; // initialized as 0
+    int cpu_usage; // initialized as 0
 
     PROCESS_STATISTICS* statistics; 
 

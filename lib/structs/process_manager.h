@@ -12,9 +12,13 @@ typedef struct { // used by process manager: many iteraction over process list b
 } pcb_list; // stand for pcb first came
 
 typedef struct {
-    int pid;; // l identifier du processus
+    int pid; // l identifier du processus
     PCB* pcb; // l id du pcb du processus
-    bool circular;
+} PROCESS_TABLE_ELEMENT;
+
+typedef struct {
+    PROCESS_TABLE_ELEMENT* head; // first element
+    int size;
 } PROCESS_TABLE;
 
 typedef struct {
@@ -57,7 +61,7 @@ typedef struct {
 
     // functions
     // on start
-    PROCESS_TABLE* (*create_process_table)(bool circular); // need to be assigned to process_table field and update the process_count field// create a chaine circulaire ou non circular
+    PROCESS_TABLE* (*create_process_table)(FILE* buffer); // need to be assigned to process_table field and update the process_count field// create a chaine circulaire ou non circular
     READY_QUEUE* (*create_ready_queue)(int size); // size which is process count field
     BLOCKED_QUEUE* (*create_blocked_queue)(int size); // will initialize by size 0 i think
 

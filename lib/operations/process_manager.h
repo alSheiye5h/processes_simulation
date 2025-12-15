@@ -3,9 +3,14 @@
 
 #include "structs/process_manager.h"
 #include "structs/process.h"
+#include "operations/helpers/process_manager.h"
 
 // initialization
-PROCESS_TABLE* op_create_process_table(bool circular) {
+PROCESS_TABLE* op_create_process_table(FILE* buffer) {
+    // read_buffer and get elements list and count
+    // create process table
+    // iterate and add to process table
+
 
 }
 
