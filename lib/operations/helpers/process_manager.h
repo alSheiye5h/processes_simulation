@@ -100,6 +100,7 @@ parser_return* parser(char* line) {
                 case 0:
                     if (sizeof(value) > 20) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in process_name\n", line);
+                        free(parsed_line);
                         exit(1);
                     }
                     (value > 20) ? 
@@ -108,6 +109,8 @@ parser_return* parser(char* line) {
                 case 1:
                     if (sizeof(value) > 20) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in user_id\n", line);
+                        free(parsed_line->process_name);
+                        free(parsed_line);
                         exit(1);
                     }
                     parsed_line->user_id = value;
@@ -115,6 +118,9 @@ parser_return* parser(char* line) {
                 case 2:
                     if ((int)strtol(value, NULL, 10) > 5 || (int)strtol(value, NULL, 10) < 1) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \npriority out of range(1-5)\n", line);
+                        free(parsed_line->process_name);
+                        free(parsed_line->user_id);
+                        free(parsed_line);
                         exit(1);
                     }
                     parsed_line->priority = (int)strtol(value, NULL, 10); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
@@ -123,6 +129,10 @@ parser_return* parser(char* line) {
                     if (sizeof(value) < 1) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \ninstructions error\n", line);
                         parsed_line->unvalid_process = true;
+                        free(parsed_line->process_name);
+                        free(parsed_line->user_id);
+                        free(parsed_line->priority);
+                        free(parsed_line);
                         exit(1);
                     }
                     insruction_parser_return* parsed_instructions = instruction_parser(value);
@@ -136,8 +146,20 @@ parser_return* parser(char* line) {
                     parsed_line->instructions_count = parsed_instructions->count; // here we define the count to check later from csv 
                     break;
                 case 4:
-                    
-            }
+                    int instructions_count = (int)strtol(value, NULL, 10);
+                    if (parsed_line->count == instructions_count) { // we check if the parsed ressource count are correct actualy this add a layer of validating
+                        fprintf(stderr, "ERROR ON: the parser function the instructions_count specified in csv :%d doesn't equal to the counted by parser: %d\n", instructions_count, parsed_line->count);
+                        parsed_line->unvalid_process = true;
+                        free(parsed_line->process_name);
+                        free(parsed_line->user_id);
+                        free(parsed_line->priority);
+                        free(parsed_line->instructions);
+                        free(parsed_line->instructions_count);
+                        free(parsed_line);
+                        exit(1);
+                    }
+                    break;
+            }   
             char_count = 0;
             value_number++;
             memset(value, 0, sizeof(value)); // setting all the bytes in memory will make it equivalent to empty string
