@@ -172,7 +172,7 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
     }
 
     returned->count = 0;
-    char instruction[3] = ""; // initializing it to prevent random value
+    char instruction[4] = {0}; // initializing it to prevent random value
 
     int instruction_char_count = 0;
     for (int i = 1; i < 20000; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
@@ -195,8 +195,9 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
                 free(returned);
                 exit(1);
             }
-            strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
-            instruction[3] = '\0';
+            instruction[3] = '\0'
+            strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction but if the instruction is not ended with \0 strcpy will copy more exceeding the buffer
+            returned->instructions[returned->count][3] = '\0';
             returned->count++;
             instruction_char_count = 0;
         } else if (value[i] == ']') { // didnt merge it with previous if for time, like ida zedt wahed l if (value[i] == '[')  ghayexecuteha bzf which is bad
@@ -218,6 +219,11 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
             instruction[3] = '\0';
             returned->count++;
             break; // instead of setting char count to 0 break the loop and return the parsed instructions
+        } else if (i == 20000) {
+            fprintf(stderr, "ERROR ON: instruction_parser the ] ending instruction never found\n");
+            free(returned->instructions);
+            free(returned);
+            exit(1);
         } else {
             fprintf(stderr, "ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction with unknwon error\n", value);
             // free the instructions then the list then returned
