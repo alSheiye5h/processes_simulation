@@ -12,7 +12,6 @@ typedef enum {
     NOT_STARTED, EXECUTING, BLOCKED, COMPLETED
 } INSTRUCTION_STATE;
 
-typedef struct PCB PCB; //forward declaration because pcb is inside instruction and instruction is inside pcb
 
 typedef struct {
     uint32_t* instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
@@ -56,4 +55,11 @@ typedef struct {
     int* pid_childrens;
     struct PCB* pid_sibling_next; // pointeur vers next sib
     struct PCB* pid_sibling_previous; // pointeur vers previous sib
+
+    float (*update_temps_attente)(struct PCB* self);
+    float (*update_turnround) (struct PCB* self);
+    bool (*mark_instruction_terminated) (struct PCB* self, INSTRUCTION* instruction);
+    bool (*update_pcb_temps_arrive) (struct PCB* self, struct tm temps_arrive,);
+    bool (*update_pcb_temps_creation) (struct PCB* self, struct tm temps_creation);
+    bool (*update_pcb_temps_fin) (struct PCB* self, struct tm temps_fin);
 } PCB;

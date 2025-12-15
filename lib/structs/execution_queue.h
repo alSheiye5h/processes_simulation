@@ -21,6 +21,6 @@ typedef struct {
     int process_id; // l'pid du current process
 
     //function
-    EXECUTION_QUEUE_RESPONSE* (*execute_instruction) (INSTRUCTION instruction);
+    EXECUTION_QUEUE_RESPONSE* (*execute_instruction) (INSTRUCTION* instruction);
 
 } EXECUTION_QUEUE;
