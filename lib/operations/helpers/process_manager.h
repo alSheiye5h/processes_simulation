@@ -155,39 +155,77 @@ typedef struct {
 
 insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
     if (value[0] == '\0' || value[0] != '[') { // we already checked NULLTY, check string hadi jsp ida kan khawi to make sure and check instruction line satts with '['
-        fprintf(stderr, "\n");
+        fprintf(stderr, "ERROR ON: instruction parser check the validity of instruction line\n");
         exit(1);
     }
     insruction_parser_return* returned = (insruction_parser_return*)malloc(sizeof(insruction_parser_return));
+    if (returned == NULL) {
+        fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation returned failed\n");
+        exit(1);
+    }
+
     returned->instructions = (char**)malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
-    if (returned == NULL || returned->instructions == NULL) {
-        fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation failed\n");
+    if (returned->instructions == NULL) {
+        free(returned); // leakmemory eskive
+        fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation returned->instructions failed\n");
         exit(1);
     }
 
     returned->count = 0;
-    char instruction[4];
+    char instruction[3] = ""; // initializing it to prevent random value
 
     int instruction_char_count = 0;
     for (int i = 1; i < 20000; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
-        if (value[i] != ',' && instruction_char_count < 3) {
-            instruction[instruction_char_count] = value[i];
+        if (value[i] != ',' && instruction_char_count < 3) { // if value is a ressource character and we didnt arrive to the end which is 3characters
+            instruction[instruction_char_count] = value[i]; // character at instruction retriving variable = fgets or instructions line char
             instruction_char_count++;
 
-        } else if ((value[i] == ',' || instruction_char_count > 2) && instruction_char_count > 0) { // for checking unvalid instruction
+        } else if (value[i] == ',' && instruction_char_count > 2) { // if tge char in instructions line is comma and instruction_char_count is > 0 mean that there is characters in instruction variable so we have a ressource
+            if (instruction_char_count != 3) { // ressource is more than 3 characters
+                // "concurrence bagha la vendetta"
+                fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
+                free(returned->instructions); // liberer memoire
+                free(returned); // liberer memoire
+                exit(1);
+            }
             returned->instructions[returned->count] = malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
             if (returned->instructions[returned->count] == NULL) {
                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
+                free(returned->instructions);
+                free(returned);
                 exit(1);
             }
             strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
             instruction[3] = '\0';
             returned->count++;
             instruction_char_count = 0;
-        } else if (value[i] == ']') {
-            break;
+        } else if (value[i] == ']') { // didnt merge it with previous if for time, like ida zedt wahed l if (value[i] == '[')  ghayexecuteha bzf which is bad
+            if (instruction_char_count != 3) { // ressource is more than 3 characters
+                // "concurrence bagha la vendetta"
+                fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
+                free(returned->instructions); // liberer memoire
+                free(returned); // liberer memoire
+                exit(1);
+            }
+            returned->instructions[returned->count] = malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
+            if (returned->instructions[returned->count] == NULL) {
+                fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
+                free(returned->instructions);
+                free(returned);
+                exit(1);
+            }
+            strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
+            instruction[3] = '\0';
+            returned->count++;
+            break; // instead of setting char count to 0 break the loop and return the parsed instructions
         } else {
-            fprintf(stderr, "ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction\n", value);
+            fprintf(stderr, "ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction with unknwon error\n", value);
+            // free the instructions then the list then returned
+            for (int i = 0; i < returned->count; i++) {
+                free(returned->instructions[i]);
+            }
+            free(returned->instructions);
+            free(returned);
             exit(1);
         }
     }
