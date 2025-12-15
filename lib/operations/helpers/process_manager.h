@@ -80,12 +80,12 @@ typedef struct {
 } parser_return;
 
 typedef struct {
-    INSTRUCTION* head;
-    int size;
+    char** instructions;
+    int count;
 } insruction_parser_return;
 
 parser_return* parser(char* line) {
-    parser_return parsed_line = {};
+    parser_return* parsed_line = {};
 
     int loop = 0; 
     int char_count = 0;
@@ -126,9 +126,18 @@ parser_return* parser(char* line) {
                         exit(1);
                     }
                     insruction_parser_return* parsed_instructions = instruction_parser(value);
+                    if (parsed_instructions == NULL || parsed_instructions->instructions == NULL) { // NULLTY CHECKS
+                        fprintf(stderr, "ERROR ON: parser line function, instruction_parser has returned a NULL value\n");
+                        free(parsed_instructions); 
+                        free(parsed_instructions->instructions); // setting free a null value is safe :-)
+                        exit(1);
+                    }
+                    parsed_line->instructions = parsed_instructions->instructions; // we assign the adress to the variable we'll return
+                    parsed_line->instructions_count = parsed_instructions->count; // here we define the count to check later from csv 
+                    break;
+                case 4:
                     
             }
-
             char_count = 0;
             value_number++;
             memset(value, 0, sizeof(value)); // setting all the bytes in memory will make it equivalent to empty string
@@ -148,10 +157,7 @@ parser_return* parser(char* line) {
 }
 
 
-typedef struct {
-    char** instructions;
-    int count;
-} insruction_parser_return;
+
 
 insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
     if (value[0] == '\0' || value[0] != '[') { // we already checked NULLTY, check string hadi jsp ida kan khawi to make sure and check instruction line satts with '['
