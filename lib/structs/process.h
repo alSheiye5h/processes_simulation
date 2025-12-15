@@ -41,11 +41,11 @@ typedef struct {
     int prioritie; // priorities from 1 to 5 ; 1-critical
 
     INSTRUCTION* instructions_head; // change to a chained list
-    long programme_compteur; // max 9,223,372,036,854,775,807 instruction
-    int memoire_necessaire; // en MB
+    int programme_compteur; // max 20000 instruction
+    long memoire_necessaire; // en MB
     INSTRUCTION* current_instruction; // l'instruction en train de s executer
 
-    int burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant
+    float burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant
     float cpu_time_used; // temps cpu consomme en ms init 0
     int remaining_time; // temps restant : = burst - cpu_time_used
     int cpu_usage; // initialized as 0

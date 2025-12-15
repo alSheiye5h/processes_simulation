@@ -63,12 +63,8 @@ buffer_return* extract_from_buffer(FILE* csv_buffer) {
     }
 }
 
-
-
-
-
 // process_name,user_id,ppid,priority,[instruction],n_instruction,memoire,burst,
-typedef struct {
+typedef struct parser_return{
     char process_name[20];
     char user_id[20];
     int priority;
@@ -76,7 +72,7 @@ typedef struct {
     int instructions_count;
     int memoire;
     float burst;
-    bool unvalid_process;
+    bool unvalid_process_csv_check;
 } parser_return;
 
 typedef struct {
@@ -85,27 +81,30 @@ typedef struct {
 } insruction_parser_return;
 
 parser_return* parser(char* line) {
-    parser_return* parsed_line = {};
+    parser_return* parsed_line = (parser_return*)malloc(sizeof(parser_return));
 
-    int loop = 0; 
     int char_count = 0;
     int value_number = 0;
     char value[100];
-    for(int i = 0; i < 10000;i++) { // line_size
-        if (line[i] != ',') {
+    for(int i = 0; i < strlen(line);i++) { // line_size
+        if (line[strlen(line)] != '\n' && line[strlen(line)] != '\0') { // trust no one
+            fprintf(stderr, "ERROR ON: parser function parser line gived is unvalid (probably will lead to loop infinite)\n", line);
+            exit(1);
+        }
+        if (line[i] != ',') { // so it's a char of ressource
             value[char_count] = line[i];
             char_count++;
         } else if (line[i] == ',') {
-            switch (value) {
+            switch (value_number) {
                 case 0:
                     if (sizeof(value) > 20) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in process_name\n", line);
                         free(parsed_line);
                         exit(1);
                     }
-                    (value > 20) ? 
-                    parsed_line->process_name = value;
-                    break;    
+                    strncpy(parsed_line->process_name, value, sizeof(parsed_line->process_name) - 1); // copy just the size of process_name and leave on char fo \0
+                    parsed_line->process_name[sizeof(parsed_line->process_name)] = '\0'; // add null terminator
+                    break;
                 case 1:
                     if (sizeof(value) > 20) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in user_id\n", line);
@@ -113,24 +112,30 @@ parser_return* parser(char* line) {
                         free(parsed_line);
                         exit(1);
                     }
-                    parsed_line->user_id = value;
+                    strncpy(parsed_line->user_id, value, sizeof(parsed_line->process_name) - 1); // copy just the size of process_name and leave on char fo \0
+                    parsed_line->user_id[sizeof(parsed_line->user_id)] = '\0'; // add null terminator
                     break;    
                 case 2:
-                    if ((int)strtol(value, NULL, 10) > 5 || (int)strtol(value, NULL, 10) < 1) {
+                    long value_to_long = strtol(value, NULL, 10);
+                    // casting direct to int can make overflow o we check the limits
+                    if (value_to_long > INT_MAX || value_to_long < INT_MIN) {
+                        // if overflow
+                        fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \npriority is ouuuut of range\n", line);
+                        exit(1);
+                    } else {
+                        int value_to_int = (int)value_to_long;
+                    }
+
+                    if (value_to_int > 5 || value_to_int < 1) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \npriority out of range(1-5)\n", line);
-                        free(parsed_line->process_name);
-                        free(parsed_line->user_id);
                         free(parsed_line);
                         exit(1);
                     }
-                    parsed_line->priority = (int)strtol(value, NULL, 10); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
+                    parsed_line->priority = value_to_int; // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
                     break;    
                 case 3:
                     if (sizeof(value) < 1) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \ninstructions error\n", line);
-                        parsed_line->unvalid_process = true;
-                        free(parsed_line->process_name);
-                        free(parsed_line->user_id);
                         free(parsed_line->priority);
                         free(parsed_line);
                         exit(1);
@@ -146,12 +151,22 @@ parser_return* parser(char* line) {
                     parsed_line->instructions_count = parsed_instructions->count; // here we define the count to check later from csv 
                     break;
                 case 4:
-                    int instructions_count = (int)strtol(value, NULL, 10);
-                    if (parsed_line->count == instructions_count) { // we check if the parsed ressource count are correct actualy this add a layer of validating
+                    long ins_cnt_lng = strtol(value, NULL, 10);
+                    if (ins_cnt_lng > INT_MAX || ins_cnt_lng < INT_MIN) {
+                        // if overflow case
+                        fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \ninstructions are out of range\n", line);
+                        exit(1);
+                    } else {
+                        int instructions_count = (int)ins_cnt_lng;
+                    }
+
+                    if (instructions_count == NULL) {
+                        fprintf(stderr, "ERROR ON: the parser function the instructions_count specified is invalid\n");
+                        exit(1);
+                    }
+                    if (parsed_line->count != instructions_count) { // we check if the parsed ressource count are correct actualy this add a layer of validating
                         fprintf(stderr, "ERROR ON: the parser function the instructions_count specified in csv :%d doesn't equal to the counted by parser: %d\n", instructions_count, parsed_line->count);
                         parsed_line->unvalid_process = true;
-                        free(parsed_line->process_name);
-                        free(parsed_line->user_id);
                         free(parsed_line->priority);
                         free(parsed_line->instructions);
                         free(parsed_line->instructions_count);
@@ -159,6 +174,38 @@ parser_return* parser(char* line) {
                         exit(1);
                     }
                     break;
+                case 5:
+                    int memoire = (int)strtol(value, NULL, 10); // 10 for base decimal
+                    if (memoire == NULL) {
+                        fprintf(stderr, "ERROR ON: the parser function the memoire specified is invalid\n");
+                        free(parsed_line->priority);
+                        free(parsed_line->instructions);
+                        free(parsed_line->instructions_count);
+                        free(parsed_line);
+                        exit(1);
+                    }
+                    parsed_line->memoire = memoire;
+                    break;
+                case 6:
+                    float burst = strtof(value, NULL);
+                    if (burst == NULL) {
+                        fprintf(stderr, "ERROR ON: the parser function the BURST specified is invalid\n");
+                        free(parsed_line->priority);
+                        free(parsed_line->instructions);
+                        free(parsed_line->instructions_count);
+                        free(parsed_line);
+                        exit(1);
+                    }
+                    parsed_line->unvalid_process_csv_check = false;
+                    parsed_line->burst = burst;
+                    break;
+                default:
+                    free(parsed_line->priority);
+                    free(parsed_line->instructions);
+                    free(parsed_line->instructions_count);
+                    free(parsed_line);
+                    fprintf(stderr, "ERROR ON: the parser function the value_number has exceded the number of columns in csv file (protocol: 7) current:%d\n", value_number);
+                    exit(1);
             }   
             char_count = 0;
             value_number++;
@@ -171,7 +218,7 @@ parser_return* parser(char* line) {
         } else if (line[i] == '\n') {
             break;
         } else {
-            fprintf(stderr, "ERROR ON: parser function", line);
+            fprintf(stderr, "ERROR ON: parser function on line %s\nunknwon error", line);
             exit(1);
         }
     }
@@ -203,7 +250,7 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
     char instruction[4] = {0}; // initializing it to prevent random value
 
     int instruction_char_count = 0;
-    for (int i = 1; i < 20001; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
+    for (int i = 1; i < 60001; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
         if (value[i] != ',' && instruction_char_count < 3) { // if value is a ressource character and we didnt arrive to the end which is 3characters
             instruction[instruction_char_count] = value[i]; // character at instruction retriving variable = fgets or instructions line char
             instruction_char_count++;
@@ -247,7 +294,7 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
             strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
             returned->count++;
             break; // instead of setting char count to 0 break the loop and return the parsed instructions
-        } else if (i == 20000) { // that why we make 20001 in the condition
+        } else if (i == 60000) { // that why we make 20001 in the condition
             fprintf(stderr, "ERROR ON: instruction_parser the ] ending instruction never found\n");
             free(returned->instructions);
             free(returned);
