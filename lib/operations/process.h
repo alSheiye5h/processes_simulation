@@ -92,3 +92,11 @@ PCB* op_mark_instruction_terminated(PCB* self, INSTRUCTION* instruction) {
     self->current_instruction->state = COMPLETED;
     return self;
 }
+
+PCB* op_get_next_pcb(PCB* pcb) {
+    return pcb->pid_sibling_next;
+}
+
+PCB* op_pid_sibling_previous(PCB* pcb) {
+    return pcb->pid_sibling_previous;
+}

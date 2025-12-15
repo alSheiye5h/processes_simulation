@@ -88,11 +88,10 @@ PCB* op_assign_functions_to_pcb(PCB* pcb) {
     pcb->update_turnround = op_update_turnround;
     pcb->mark_instruction_terminated = op_mark_instruction_terminated;
     pcb->update_temps_arrive = op_update_temps_arrive;
-    pcb->update_temps_creation
+    pcb->update_temps_creation = op_update_temps_creation;
     pcb->update_temps_fin = op_update_temps_fin;
-    pcb->get_next_pcb
-    pcb->get_previous_pcb
-    pcb->define_next
-    pcb->define_previous
-
+    pcb->get_next_pcb = op_get_next_pcb;
+    pcb->get_previous_pcb = op_pid_sibling_previous;
+    pcb->define_next = op_pcb_define_next;
+    pcb->define_previous = op_pcb_define_previous;
 }

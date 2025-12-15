@@ -4,6 +4,9 @@
 
 #include <stdbool.h>
 
+// need_to_be_changed
+char instructions_list[6] = ["aaa", "bbb", "ccc", "ddd", "eee", "fff"];
+
 typedef struct {
     PCB* head;
     int size;
@@ -93,7 +96,7 @@ parser_return* parser(char* line) {
             value[char_count] = line[i];
             char_count++;
         } else if (line[i] == ',') {
-            switch (value_number) {
+            switch (value) {
                 case 0:
                     if (sizeof(value) > 20) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \nhas exceded 20 caracter in process_name\n", line);
@@ -110,15 +113,17 @@ parser_return* parser(char* line) {
                     parsed_line->user_id = value;
                     break;    
                 case 2:
-                    if (value > 5 || value < 1) {
+                    if ((int)strtol(value, NULL, 10) > 5 || (int)strtol(value, NULL, 10) < 1) {
                         fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \npriority out of range(1-5)\n", line);
                         exit(1);
                     }
-                    parsed_line->priority = atoi(value); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
+                    parsed_line->priority = (int)strtol(value, NULL, 10); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
                     break;    
                 case 3:
                     if (sizeof(value) < 1) {
-                        parsed_line->unvalid_process = 1;
+                        fprintf(stderr, "ERROR ON: parser function process line in csv '%s' \ninstructions error\n", line);
+                        parsed_line->unvalid_process = true;
+                        exit(1);
                     }
                     insruction_parser_return* parsed_instructions = instruction_parser(value);
                     
@@ -148,30 +153,35 @@ typedef struct {
     int count;
 } insruction_parser_return;
 
-insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name
+insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
+    if (value[0] == '\0' || value[0] != '[') { // we already checked NULLTY, check string hadi jsp ida kan khawi to make sure and check instruction line satts with '['
+        fprintf(stderr, "\n");
+        exit(1);
+    }
     insruction_parser_return* returned = (insruction_parser_return*)malloc(sizeof(insruction_parser_return));
-    returned->instructions = malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
+    returned->instructions = (char**)malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
     if (returned == NULL || returned->instructions == NULL) {
         fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation failed\n");
         exit(1);
     }
 
     returned->count = 0;
-    char instruction[4]; 
+    char instruction[4];
 
     int instruction_char_count = 0;
     for (int i = 1; i < 20000; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
         if (value[i] != ',' && instruction_char_count < 3) {
             instruction[instruction_char_count] = value[i];
             instruction_char_count++;
+
         } else if ((value[i] == ',' || instruction_char_count > 2) && instruction_char_count > 0) { // for checking unvalid instruction
-            returned->instructions[returned->count] = malloc(4 * sizeof(char)); // max 3 + null terminator
+            returned->instructions[returned->count] = malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
             if (returned->instructions[returned->count] == NULL) {
                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
                 exit(1);
             }
-            instruction[3] = '\0';
             strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
+            instruction[3] = '\0';
             returned->count++;
             instruction_char_count = 0;
         } else if (value[i] == ']') {
