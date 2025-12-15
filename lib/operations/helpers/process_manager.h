@@ -1,7 +1,8 @@
-
+#pragma once
 
 #include "structs/process.h"
 
+#include <stdbool.h>
 
 typedef struct {
     PCB* head;

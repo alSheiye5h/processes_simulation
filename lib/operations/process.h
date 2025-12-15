@@ -1,12 +1,10 @@
 #pragma once
 
 #include <time.h>
+#include <stdbool.h>
 
 #include "structs/process.h"
 
-bool op_update_process(PCB* pcb, struct tm temps_arrive, struct tm temps_fin, float cpu_temps_used, float temps_attente, int cpu_usage) {
-
-}
 
 bool op_update_temps_arrive(PCB* pcb, struct tm temps_arrive) {
     if (pcb == NULL || temps_arrive == NULL) {

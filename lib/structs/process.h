@@ -59,7 +59,7 @@ typedef struct {
     float (*update_temps_attente)(struct PCB* self);
     float (*update_turnround) (struct PCB* self);
     bool (*mark_instruction_terminated) (struct PCB* self, INSTRUCTION* instruction);
-    bool (*update_pcb_temps_arrive) (struct PCB* self, struct tm temps_arrive,);
-    bool (*update_pcb_temps_creation) (struct PCB* self, struct tm temps_creation);
-    bool (*update_pcb_temps_fin) (struct PCB* self, struct tm temps_fin);
+    bool (*update_temps_arrive) (struct PCB* self, struct tm temps_arrive);
+    bool (*update_temps_creation) (struct PCB* self, struct tm temps_creation);
+    bool (*update_temps_fin) (struct PCB* self, struct tm temps_fin);
 } PCB;
