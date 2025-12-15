@@ -1,5 +1,6 @@
 
 
+#include "structs/process.h"
 
 
 typedef struct {
@@ -33,6 +34,15 @@ typedef struct {
     PCB* pid_sibling_previous; // pointeur vers previous sib
 } PCB;
 
+typedef struct {
+    uint32_t* instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
+    PCB* process; // the id of the process owner
+
+    float time_remaining; // in nano seconds
+    RESSOURCE_ELEMENT* type; // type of instruction which is ressource needed
+    INSTRUCTION_STATE* state; // state of instruction 
+} INSTRUCTION;
+
 buffer_return* extract_from_buffer(FILE* csv_buffer) {
     
     int count = 0;
@@ -48,10 +58,62 @@ buffer_return* extract_from_buffer(FILE* csv_buffer) {
     }
 }
 
-typedef struct {
 
+// process_name,user_id,ppid,priority,[instruction],n_instruction,memoire,burst,
+typedef struct {
+    char process_name[20];
+    char user_id[20];
+    int priority;
+    char** instructions;
+    int instructions_count;
+    int memoire;
+    float burst;
 } parser_return;
 
-buffer_return* parse(char* line) {
+parser_return* parser(char* line) {
+    parser_return parsed_line = {};
 
+    int loop = 0; 
+    int char_count = 0;
+    int value_number = 0;
+    char value[100];
+    for(int i = 0; i < 10000;i++) { // instructions_count
+        if (line[i] != ",") {
+            value[char_count] = line[i];
+            char_count++;
+        } else if (line[i] == ",") {
+            switch (value_number) {
+                case 0:
+                    if (sizeof(value) > 20) {
+                        printf("ERROR ON: parser function process line in csv '%s' has exceded 20 caracter in name\n");
+                    }
+                    (value > 20) ? 
+                    parsed_line->process_name = value;
+                    break;    
+                case 1:
+                    parsed_line->user_id = value;
+                    break;    
+                case 2:
+                    parsed_line->priority = atoi(value); // atoi stand for ascii to integer and located in stdlib; maybe make ours if we still have time
+                    break;    
+                case 3:
+                    parsed_line-> 
+            }
+
+            char_count = 0;
+            value_number++;
+            memset(value, 0, sizeof(value)); // setting all the bytes in memory will make it equivalent to empty string
+
+            if (value_number > 6) {
+                printf("ERROR ON: parser function (csv file data unvalid)");
+                exit(1);
+            }
+        } else if (line[i] == "\n") {
+            break;
+        } else {
+            printf("ERROR ON: parser function");
+            exit(1);
+        }
+    }
+    return parsed_line;
 }
