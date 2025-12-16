@@ -9,14 +9,16 @@
 #include <time.h>
 #include <limits.h> // for INT_MAX AND INT_MIN
 
-// need_to_be_changed
-char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
-int instruction_list_len = 6;
 
+
+
+// structs
 typedef struct {
-    PCB* head;
+    PCB* pcb;
     int size;
 } buffer_return;
+
+
 // process_name,user_id,ppid,priority,[instruction],n_instruction,memoire,burst,
 typedef struct parser_return{
     char process_name[20];
@@ -30,16 +32,77 @@ typedef struct parser_return{
     bool unvalid_process_csv_check;
 } parser_return;
 
-void free_parsed_buffer(parser_return* parsed_buffer) {
-    if (!parsed_buffer) return;
-    free(parsed_buffer->process_name);
-    free(parsed_buffer->user_id);
-    for (int i = 0; i < parsed_buffer->instructions_count; i++) {
-        free((parsed_buffer->instructions[i]));
-    
+typedef struct {
+    INSTRUCTION* instructions_head;
+    INSTRUCTION* instructions_fin; //adding it for time consuming
+    int count;
+} insruction_parser_return;
+
+
+// helpers 
+bool check_known_ressource(char ressource[]) {
+    int flag = 0;
+    for (int i = 0; i < instruction_list_len; i++) {
+        if (strcmp(instructions_list[i], ressource)) {
+            flag = 1;
+            break;
+        }
     }
-    free(parsed_buffer);
+    return (flag == 1) ? true : false;
 }
+
+void free_instructions_chaine(INSTRUCTION* instruct_head) {
+    if (instruct_head == NULL) {
+        fprintf(stderr, "ERROR ON: instructionfree_instructions_chaine attemp of freeing a null\n");
+    } else {
+        INSTRUCTION* temp;
+        while (instruct_head != NULL) {
+            temp = instruct_head;
+            instruct_head = instruct_head->next;
+            free(temp);
+        }
+    }
+}
+
+// btw this list is for testing purpose char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
+INSTRUCTION* add_instruction_type(int count, INSTRUCTION* instruct, char instruction[]) {
+    bool check = false; // init as false and if conditio nmet make true then check and raise error
+    if (strcmp(instruction, "AAA") == 0) { instruct->type = AAA; check = true;}
+    else if (strcmp(instruction, "BBB") == 0) { instruct->type = BBB;  check = true;} 
+    else if (strcmp(instruction, "CCC") == 0) { instruct->type = CCC;  check = true;} 
+    else if (strcmp(instruction, "DDD") == 0) { instruct->type = DDD;  check = true;} 
+    else if (strcmp(instruction, "EEE") == 0) { instruct->type = EEE;  check = true;} 
+    else if (strcmp(instruction, "FFF") == 0) { instruct->type = FFF;  check = true;}
+    
+    if (check == false) {
+        fprintf(stderr, "ERROR ON: function add_instruction not condition met\n");
+        exit(1);
+    }
+
+    instruct->instruct_id;
+
+    // make count ad id
+    instruct->instruct_id = count;
+    
+    return instruct; 
+}
+
+// handle error where the instruction_fin pointer doesnt pointe to last node
+INSTRUCTION* returned_instructions_fin_not_end(INSTRUCTION* fin) {
+    while(fin->next != NULL) {
+        fin = fin->next;
+    }
+    return fin;
+}
+
+// pricipale functions
+
+// need_to_be_changed
+char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
+int instruction_list_len = 6;
+
+
+
 
 buffer_return* extract_from_buffer(FILE* csv_buffer) {
     
@@ -49,11 +112,25 @@ buffer_return* extract_from_buffer(FILE* csv_buffer) {
     while(fgets(line_pcb, sizeof(line_pcb), csv_buffer)) { // dont forget temps creation
         parser_return* paresed_buffer = parser(line_pcb); // intializing the returned struct after parsing a line
         PCB* pcb = (PCB*)malloc(sizeof(PCB)); // initializing the pcb
+        PROCESS_STATISTICS* statistics =  (PROCESS_STATISTICS*)malloc(sizeof(PROCESS_STATISTICS)); // allocate statistics for the pcb
         
         if (paresed_buffer == NULL) {
-            fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's has returned NULL %s\n", paresed_buffer->process_name);
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer failed allcation paresed_buffer");
             exit(1);
         }
+
+        if (pcb == NULL) {
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer failed allcation pcb");
+            exit(1);
+        }
+
+        if (statistics == NULL) {
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer failed allcation statistics");
+            exit(1);
+        }
+
+        // assong statitics to it's pcb
+        pcb->statistics = statistics;
 
         // copy the process name
         if (strlen(paresed_buffer->process_name) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
@@ -71,35 +148,42 @@ buffer_return* extract_from_buffer(FILE* csv_buffer) {
             free_parsed_buffer(paresed_buffer);
             exit(1);
         }
-        strncpy(pcb->user_id, paresed_buffer->user_id, sizeof(paresed_buffer->user_id) - 1); // copy just the size of process_name 
-        pcb->user_id[sizeof(pcb->user_id) - 1] = '\0'; // add null terminator
 
-        // copy the priority
-        pcb->prioritie = paresed_buffer->priority;
+        if (parsed_buffer->unvalid_process_csv_check == false) {
 
-        // copy the instruction
-        pcb->instructions_head = paresed_buffer->instructions_head;
+            strncpy(pcb->user_id, paresed_buffer->user_id, sizeof(paresed_buffer->user_id) - 1); // copy just the size of process_name 
+            pcb->user_id[sizeof(pcb->user_id) - 1] = '\0'; // add null terminator
 
-        // copu n instructions
-        pcb->programme_compteur = parsed_buffer->instructions_count;
+            // copy the priority
+            pcb->prioritie = paresed_buffer->priority;
 
-        // copy memoire
-        pcb->memoire_necessaire = parsed_buffer->memoire;
+            // copy the instruction
+            pcb->instructions_head = paresed_buffer->instructions_head;
 
-        // to prevent random value i think
-        pcb->current_instruction = NULL;
+            // copu n instructions
+            pcb->programme_compteur = parsed_buffer->instructions_count;
 
-        
+            // copy memoire
+            pcb->memoire_necessaire = parsed_buffer->memoire;
+
+            // to prevent random value i think
+            pcb->current_instruction = NULL;
+
+            // burst
+            pcb->burst_time = parsed_buffer->burst;
+
+            // creation time same type time_t
+            pcb->statistics->temps_creation = parsed_buffer->temps_creation;
+
+            // parsed_buufer dont need to be free bacause has pointers and scope values
+            
+        } else {
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's csv validity check has returned true%s\n", paresed_buffer->process_name);
+            exit(1);
+        }
     }
 }
 
-
-
-typedef struct {
-    INSTRUCTION* instructions_head;
-    INSTRUCTION* instructions_fin; //adding it for time consuming
-    int count;
-} insruction_parser_return;
 
 
 parser_return* parser(char* line) {
@@ -287,60 +371,6 @@ parser_return* parser(char* line) {
         }
     }
     return parsed_line;
-}
-
-bool check_known_ressource(char ressource[]) {
-    int flag = 0;
-    for (int i = 0; i < instruction_list_len; i++) {
-        if (strcmp(instructions_list[i], ressource)) {
-            flag = 1;
-        }
-    }
-    return (flag == 1) ? true : false;
-}
-
-void free_instructions_chaine(INSTRUCTION* instruct_head) {
-    if (instruct_head == NULL) {
-        fprintf(stderr, "ERROR ON: instructionfree_instructions_chaine attemp of freeing a null\n");
-    } else {
-        INSTRUCTION* temp;
-        while (instruct_head != NULL) {
-            temp = instruct_head;
-            instruct_head = instruct_head->next;
-            free(temp);
-        }
-    }
-}
-
-// btw this list is for testing purpose char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
-INSTRUCTION* add_instruction_type(int count, INSTRUCTION* instruct, char instruction[]) {
-    bool check = false; // init as false and if conditio nmet make true then check and raise error
-    if (strcmp(instruction, "AAA") == 0) { instruct->type = AAA; check = true;}
-    else if (strcmp(instruction, "BBB") == 0) { instruct->type = BBB;  check = true;} 
-    else if (strcmp(instruction, "CCC") == 0) { instruct->type = CCC;  check = true;} 
-    else if (strcmp(instruction, "DDD") == 0) { instruct->type = DDD;  check = true;} 
-    else if (strcmp(instruction, "EEE") == 0) { instruct->type = EEE;  check = true;} 
-    else if (strcmp(instruction, "FFF") == 0) { instruct->type = FFF;  check = true;}
-    
-    if (check == false) {
-        fprintf(stderr, "ERROR ON: function add_instruction not condition met\n");
-        exit(1);
-    }
-
-    instruct->instruct_id;
-
-    // make count ad id
-    instruct->instruct_id = count;
-    
-    return instruct; 
-}
-
-// handle error where the instruction_fin pointer doesnt pointe to last node
-INSTRUCTION* returned_instructions_fin_not_end(INSTRUCTION* fin) {
-    while(fin->next != NULL) {
-        fin = fin->next;
-    }
-    return fin;
 }
 
 insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
