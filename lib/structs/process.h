@@ -4,6 +4,7 @@
 #include "structs/ressource.h" 
 #include <time.h>
 #include <stdbool.h>
+#include "structs/ressource.h" // for ressource enum
 
 typedef enum {
     READY, BLOCKED, EXECUTION, TERMINATED
@@ -15,13 +16,13 @@ typedef enum {
 } INSTRUCTION_STATE;
 
 
-typedef struct {
-    int* instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
+typedef struct INSTRUCTION{
+    int instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
     PCB* process; // the id of the process owner
 
     float time_remaining; // in nano seconds
-    RESSOURCE_ELEMENT* type; // type of instruction which is ressource needed
-    INSTRUCTION_STATE* state; // state of instruction 
+    RESSOURCE type; // type of instruction which is ressource needed
+    INSTRUCTION_STATE state; // state of instruction 
     struct INSTRUCTION* next;
 } INSTRUCTION;
 
@@ -44,7 +45,7 @@ typedef struct {
 
     INSTRUCTION* instructions_head; // change to a chained list
     int programme_compteur; // max 20000 instruction
-    long memoire_necessaire; // en MB
+    int memoire_necessaire; // en MB
     INSTRUCTION* current_instruction; // l'instruction en train de s executer
 
     float burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant

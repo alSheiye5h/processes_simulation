@@ -10,7 +10,7 @@
 #include <limits.h> // for INT_MAX AND INT_MIN
 
 // need_to_be_changed
-char instructions_list[6][4] = {"aaa", "bbb", "ccc", "ddd", "eee", "fff"};
+char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
 int instruction_list_len = 6;
 
 typedef struct {
@@ -22,7 +22,7 @@ typedef struct parser_return{
     char process_name[20];
     char user_id[20];
     int priority;
-    char** instructions;
+    INSTRUCTION* instructions_head;
     int instructions_count;
     int memoire;
     float burst;
@@ -41,53 +41,63 @@ void free_parsed_buffer(parser_return* parsed_buffer) {
     free(parsed_buffer);
 }
 
-// buffer_return* extract_from_buffer(FILE* csv_buffer) {
+buffer_return* extract_from_buffer(FILE* csv_buffer) {
     
-//     int count = 0;
+    int count = 0;
 
-//     char line_pcb[70000];
-//     while(fgets(line_pcb, sizeof(line_pcb), csv_buffer)) { // dont forget temps creation
-//         parser_return* paresed_buffer = parser(line_pcb); // intializing the returned struct after parsing a line
-//         PCB* pcb = (PCB*)malloc(sizeof(PCB)); // initializing the pcb
+    char line_pcb[70000];
+    while(fgets(line_pcb, sizeof(line_pcb), csv_buffer)) { // dont forget temps creation
+        parser_return* paresed_buffer = parser(line_pcb); // intializing the returned struct after parsing a line
+        PCB* pcb = (PCB*)malloc(sizeof(PCB)); // initializing the pcb
         
-//         if (paresed_buffer == NULL) {
-//             fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's has returned NULL %s\n", paresed_buffer->process_name);
-//             exit(1);
-//         }
+        if (paresed_buffer == NULL) {
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's has returned NULL %s\n", paresed_buffer->process_name);
+            exit(1);
+        }
 
-//         // copy the process name
-//         if (strlen(paresed_buffer->process_name) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
-//             fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's process name has exceed 20 char %s\n", paresed_buffer->process_name);
-//             free_parsed_buffer(paresed_buffer);
-//             exit(1);
-//         }
-//         strncpy(pcb->process_name, paresed_buffer->process_name, sizeof(paresed_buffer->process_name) - 1); // copy just the size of process_name 
-//         pcb->process_name[sizeof(pcb->process_name) - 1] = '\0'; // add null terminator
+        // copy the process name
+        if (strlen(paresed_buffer->process_name) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's process name has exceed 20 char %s\n", paresed_buffer->process_name);
+            free_parsed_buffer(paresed_buffer);
+            exit(1);
+        }
+        strncpy(pcb->process_name, paresed_buffer->process_name, sizeof(paresed_buffer->process_name) - 1); // copy just the size of process_name 
+        pcb->process_name[sizeof(pcb->process_name) - 1] = '\0'; // add null terminator
 
 
-//         // copy the user_id
-//         if (strlen(paresed_buffer->user_id) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
-//             fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's user_id has exceed 20 char %s\n", paresed_buffer->user_id);
-//             free_parsed_buffer(paresed_buffer);
-//             exit(1);
-//         }
-//         strncpy(pcb->user_id, paresed_buffer->user_id, sizeof(paresed_buffer->user_id) - 1); // copy just the size of process_name 
-//         pcb->user_id[sizeof(pcb->user_id) - 1] = '\0'; // add null terminator
+        // copy the user_id
+        if (strlen(paresed_buffer->user_id) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
+            fprintf(stderr, "ERROR ON: parser function extract_from_buffer parsed buffer's user_id has exceed 20 char %s\n", paresed_buffer->user_id);
+            free_parsed_buffer(paresed_buffer);
+            exit(1);
+        }
+        strncpy(pcb->user_id, paresed_buffer->user_id, sizeof(paresed_buffer->user_id) - 1); // copy just the size of process_name 
+        pcb->user_id[sizeof(pcb->user_id) - 1] = '\0'; // add null terminator
 
-//         // copy the priority
-//         pcb->prioritie = paresed_buffer->priority;
+        // copy the priority
+        pcb->prioritie = paresed_buffer->priority;
 
-//         // copy the instruction
-//         pcb->instr
+        // copy the instruction
+        pcb->instructions_head = paresed_buffer->instructions_head;
+
+        // copu n instructions
+        pcb->programme_compteur = parsed_buffer->instructions_count;
+
+        // copy memoire
+        pcb->memoire_necessaire = parsed_buffer->memoire;
+
+        // to prevent random value i think
+        pcb->current_instruction = NULL;
 
         
-//     }
-// }
+    }
+}
 
 
 
 typedef struct {
-    char** instructions;
+    INSTRUCTION* instructions_head;
+    INSTRUCTION* instructions_fin; //adding it for time consuming
     int count;
 } insruction_parser_return;
 
@@ -169,7 +179,7 @@ parser_return* parser(char* line) {
                         free(value); // free the value
                         exit(1);
                     }
-                    parsed_line->instructions = parsed_instructions->instructions; // we assign the adress to the variable we'll return
+                    parsed_line->instructions_head = parsed_instructions->instructions_head; // we assign the adress to the variable we'll return
                     parsed_line->instructions_count = parsed_instructions->count; // here we define the count to check later from csv 
                     value = (char*)realloc(value, sizeof(char)); // realloc the value to its original
                     break;
@@ -280,13 +290,57 @@ parser_return* parser(char* line) {
 }
 
 bool check_known_ressource(char ressource[]) {
+    int flag = 0;
     for (int i = 0; i < instruction_list_len; i++) {
-        int flag = 0;
         if (strcmp(instructions_list[i], ressource)) {
-            flag = 1
+            flag = 1;
         }
     }
     return (flag == 1) ? true : false;
+}
+
+void free_instructions_chaine(INSTRUCTION* instruct_head) {
+    if (instruct_head == NULL) {
+        fprintf(stderr, "ERROR ON: instructionfree_instructions_chaine attemp of freeing a null\n");
+    } else {
+        INSTRUCTION* temp;
+        while (instruct_head != NULL) {
+            temp = instruct_head;
+            instruct_head = instruct_head->next;
+            free(temp);
+        }
+    }
+}
+
+// btw this list is for testing purpose char instructions_list[6][4] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
+INSTRUCTION* add_instruction_type(int count, INSTRUCTION* instruct, char instruction[]) {
+    bool check = false; // init as false and if conditio nmet make true then check and raise error
+    if (strcmp(instruction, "AAA") == 0) { instruct->type = AAA; check = true;}
+    else if (strcmp(instruction, "BBB") == 0) { instruct->type = BBB;  check = true;} 
+    else if (strcmp(instruction, "CCC") == 0) { instruct->type = CCC;  check = true;} 
+    else if (strcmp(instruction, "DDD") == 0) { instruct->type = DDD;  check = true;} 
+    else if (strcmp(instruction, "EEE") == 0) { instruct->type = EEE;  check = true;} 
+    else if (strcmp(instruction, "FFF") == 0) { instruct->type = FFF;  check = true;}
+    
+    if (check == false) {
+        fprintf(stderr, "ERROR ON: function add_instruction not condition met\n");
+        exit(1);
+    }
+
+    instruct->instruct_id;
+
+    // make count ad id
+    instruct->instruct_id = count;
+    
+    return instruct; 
+}
+
+// handle error where the instruction_fin pointer doesnt pointe to last node
+INSTRUCTION* returned_instructions_fin_not_end(INSTRUCTION* fin) {
+    while(fin->next != NULL) {
+        fin = fin->next;
+    }
+    return fin;
 }
 
 insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
@@ -300,8 +354,24 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
         exit(1);
     }
 
-    returned->instructions = (char**)malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
-    if (returned->instructions == NULL) {
+    // returned->instructions = (char**)malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
+
+    INSTRUCTION* instruction_init = (INSTRUCTION*)malloc(sizeof(INSTRUCTION)); // alocate first node
+
+    if (instruction_init == NULL) {
+        fprintf(stderr, "ERROR ON: instruction_parser function, allocation of instruction_init returned failed\n");
+        exit(1);
+    }
+
+    // setting next to null if we need it in future
+    instruction_init->next = NULL;
+
+    instruction_init->state = NOT_STARTED;
+    returned->instructions_head = instruction_init; // make it the 
+    returned->instructions_fin = instruction_init; // and the end
+    
+
+    if (returned->instructions_fin == NULL) {
         free(returned); // leakmemory eskive
         fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation returned->instructions failed\n");
         exit(1);
@@ -312,63 +382,110 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
 
     int instruction_char_count = 0;
     for (int i = 1; i < 60001; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
+
         if (value[i] != ',' && instruction_char_count < 3) { // if value is a ressource character and we didnt arrive to the end which is 3characters
+
             instruction[instruction_char_count] = value[i]; // character at instruction retriving variable = fgets or instructions line char
             instruction_char_count++;
-        } else if (value[i] == ',' && instruction_char_count == 3) { // if tge char in instructions line is comma and instruction_char_count is 3 mean that valid instruction variable so we have a ressource
+
+        } else if (value[i] == ',') { // if tge char in instructions line is comma and instruction_char_count is 3 mean that valid instruction variable so we have a ressource
+           
             if (instruction_char_count != 3) { // ressource is more than 3 characters
                 // "concurrence bagha la vendetta"
                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
-                free(returned->instructions); // liberer memoire
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
                 free(returned); // liberer memoire
                 exit(1);
             }
-            returned->instructions[returned->count] = (char*)malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
-            if (returned->instructions[returned->count] == NULL) {
+           
+            returned->instructions_fin->next = (INSTRUCTION*)malloc(sizeof(INSTRUCTION)); // allocate an instruction in next to fill it
+            if (returned->instructions_fin->next == NULL) {
                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
-                free(returned->instructions);
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
                 free(returned);
                 exit(1);
             }
             instruction[3] = '\0';
 
             // check if the ressource is a known ressource
-            if (!check_known_ressource(instruction)) {
+            if (check_known_ressource(instruction) == false) {
                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\ninstruction %s is not allowed", value, instruction);
-                free(returned->instructions);
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
                 free(returned);
                 exit(1);
             }
 
-            strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction but if the instruction is not ended with \0 strcpy will copy more exceeding the buffer
-            returned->instructions[returned->count][3] = '\0';
+            // increase the instructions_count by 1
             returned->count++;
+
+            // add it to chaine
+            INSTRUCTION* end = add_instruction_type(returned->count, returned->instructions_fin->next, instruction);   
+
+            // if the returned->instructions_fin doesnt point to the last node
+            if (returned->instructions_fin->next != NULL) {
+                returned->instructions_fin = returned_instructions_fin_not_end(returned->instructions_fin);
+            }
+
+            // update the end of the chaine to the new instruction node
+            returned->instructions_fin = end;
+
+            // make instructions char index 0
             instruction_char_count = 0;
-            instruction[0] = '\0'; // clearing the array
-        } else if (value[i] == ']' || value[i] == '\0') { // didnt merge it with previous if for time, like ida zedt wahed l if (value[i] == ']')  ghayexecuteha bzf which is bad
+
+            memset(instruction, 0, sizeof(instruction)); // clearing the array
+
+        } else if (value[i] == ']') { // didnt merge it with previous if for time, like ida zedt wahed l if (value[i] == ']')  ghayexecuteha bzf which is bad
+            
             if (instruction_char_count != 3) { // ressource is more than 3 characters
                 // "concurrence bagha la vendetta"
                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
-                free(returned->instructions); // liberer memoire
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
                 free(returned); // liberer memoire
                 exit(1);
             }
-            returned->instructions[returned->count] = (char*)malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
-            if (returned->instructions[returned->count] == NULL) {
+           
+            returned->instructions_fin->next = (INSTRUCTION*)malloc(sizeof(INSTRUCTION)); // allocate an instruction in next to fill it
+            if (returned->instructions_fin->next == NULL) {
                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
-                free(returned->instructions);
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
                 free(returned);
                 exit(1);
             }
             instruction[3] = '\0';
-            strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
+
+            // check if the ressource is a known ressource
+            if (check_known_ressource(instruction) == false) {
+                fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\ninstruction %s is not allowed", value, instruction);
+                free_instructions_chaine(returned->instructions_head); // liberer memoire
+                free(returned);
+                exit(1);
+            }
+
+            // increase the instructions_count by 1
             returned->count++;
+
+            // add it to chaine
+            INSTRUCTION* end = add_instruction_type(returned->count, returned->instructions_fin->next, instruction);   
+
+            // if the returned->instructions_fin doesnt point to the last node
+            if (returned->instructions_fin->next != NULL) {
+                returned->instructions_fin = returned_instructions_fin_not_end(returned->instructions_fin);
+            }
+
+            // update the end of the chaine to the new instruction node
+            returned->instructions_fin = end;
+
+            // make instructions char index 0
+            instruction_char_count = 0;
+          
             break; // instead of setting char count to 0 break the loop and return the parsed instructions
+       
         } else if (i == 60000) { // that why we make 60001 in the condition
             fprintf(stderr, "ERROR ON: instruction_parser the ] ending instruction never found\n");
             free(returned->instructions);
             free(returned);
             exit(1);
+        
         } else {
             fprintf(stderr, "ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction with unknwon error\n", value);
             // free the instructions then the list then returned
@@ -382,3 +499,100 @@ insruction_parser_return* instruction_parser(char* value) { // retrieve instruct
     }
     return returned;
 }
+
+
+
+// old without chained list 
+// insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
+//     if (value[0] == '\0' || value[0] != '[') { // we already checked NULLTY, check string hadi jsp ida kan khawi to make sure and check instruction line satts with '['
+//         fprintf(stderr, "ERROR ON: instruction parser check the validity of instruction line\n");
+//         exit(1);
+//     }
+//     insruction_parser_return* returned = (insruction_parser_return*)malloc(sizeof(insruction_parser_return));
+//     if (returned == NULL) {
+//         fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation returned failed\n");
+//         exit(1);
+//     }
+
+//     returned->instructions = (char**)malloc(20000 * sizeof(char*)); // 20000 instruction each instruction is a pointer to a string and has exactly 3caracters
+//     if (returned->instructions == NULL) {
+//         free(returned); // leakmemory eskive
+//         fprintf(stderr, "ERROR ON: instruction_parser function, dynamic allocation returned->instructions failed\n");
+//         exit(1);
+//     }
+
+//     returned->count = 0;
+//     char instruction[4] = {0}; // initializing it to prevent random value
+
+//     int instruction_char_count = 0;
+//     for (int i = 1; i < 60001; i++) {// instructions_count // initializing i to 1 bach na9zo hadak '['
+//         if (value[i] != ',' && instruction_char_count < 3) { // if value is a ressource character and we didnt arrive to the end which is 3characters
+//             instruction[instruction_char_count] = value[i]; // character at instruction retriving variable = fgets or instructions line char
+//             instruction_char_count++;
+//         } else if (value[i] == ',' && instruction_char_count == 3) { // if tge char in instructions line is comma and instruction_char_count is 3 mean that valid instruction variable so we have a ressource
+//             if (instruction_char_count != 3) { // ressource is more than 3 characters
+//                 // "concurrence bagha la vendetta"
+//                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
+//                 free(returned->instructions); // liberer memoire
+//                 free(returned); // liberer memoire
+//                 exit(1);
+//             }
+//             returned->instructions[returned->count] = (char*)malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
+//             if (returned->instructions[returned->count] == NULL) {
+//                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
+//                 free(returned->instructions);
+//                 free(returned);
+//                 exit(1);
+//             }
+//             instruction[3] = '\0';
+
+//             // check if the ressource is a known ressource
+//             if (check_known_ressource(instruction) == false) {
+//                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\ninstruction %s is not allowed", value, instruction);
+//                 free(returned->instructions);
+//                 free(returned);
+//                 exit(1);
+//             }
+
+//             strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction but if the instruction is not ended with \0 strcpy will copy more exceeding the buffer
+//             returned->instructions[returned->count][3] = '\0';
+//             returned->count++;
+//             instruction_char_count = 0;
+//             instruction[0] = '\0'; // clearing the array
+//         } else if (value[i] == ']' || value[i] == '\0') { // didnt merge it with previous if for time, like ida zedt wahed l if (value[i] == ']')  ghayexecuteha bzf which is bad
+//             if (instruction_char_count != 3) { // ressource is more than 3 characters
+//                 // "concurrence bagha la vendetta"
+//                 fprintf(stderr, "ERROR ON: instruction_parser failed at line %s\nan instruction %s with length %d is more than allowed", value, instruction, instruction_char_count);
+//                 free(returned->instructions); // liberer memoire
+//                 free(returned); // liberer memoire
+//                 exit(1);
+//             }
+//             returned->instructions[returned->count] = (char*)malloc(4 * sizeof(char));// chwiiiiiiiya 3la lbufferoverflow, 3 + \0 null terminator
+//             if (returned->instructions[returned->count] == NULL) {
+//                 fprintf(stderr, "ERROR ON: instruction_parser failed allocating the instruction\n");
+//                 free(returned->instructions);
+//                 free(returned);
+//                 exit(1);
+//             }
+//             instruction[3] = '\0';
+//             strcpy(returned->instructions[returned->count], instruction); // copy the string to the allocated instruction
+//             returned->count++;
+//             break; // instead of setting char count to 0 break the loop and return the parsed instructions
+//         } else if (i == 60000) { // that why we make 60001 in the condition
+//             fprintf(stderr, "ERROR ON: instruction_parser the ] ending instruction never found\n");
+//             free(returned->instructions);
+//             free(returned);
+//             exit(1);
+//         } else {
+//             fprintf(stderr, "ERROR ON: instruction_parser function process line in csv \n '%s' unvalid instruction with unknwon error\n", value);
+//             // free the instructions then the list then returned
+//             for (int i = 0; i < returned->count; i++) {
+//                 free(returned->instructions[i]);
+//             }
+//             free(returned->instructions);
+//             free(returned);
+//             exit(1);
+//         }
+//     }
+//     return returned;
+// }
