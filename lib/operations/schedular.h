@@ -5,7 +5,7 @@
 #include "structs/execution_queue.h"
 #include "structs/schedular.h"
 #include "structs/ressource.h"
-#include "structs/instruction.h"
+#include "structs/process.h"
 
 
 
