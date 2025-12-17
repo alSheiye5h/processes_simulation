@@ -7,12 +7,12 @@ typedef enum {
     NEED_RESSOURCE, DONE
 } EXECUT_RESPONSE;
 
-typedef struct {
+typedef struct EXECUTION_QUEUE_RESPONSE {
     INSTRUCTION* instruction;
     EXECUT_RESPONSE response;
 } EXECUTION_QUEUE_RESPONSE;
 
-typedef struct {
+typedef struct EXECUTION_QUEUE {
     int id; // l id du composant en train d'executer
     char name[10]; // name du composant qui execute
 

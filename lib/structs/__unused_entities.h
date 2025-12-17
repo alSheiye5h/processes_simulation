@@ -11,7 +11,7 @@ typedef enum {
     // ressources
 } RESSOURCE;
 
-typedef struct {
+typedef struct RESSOURCES_ELEMENT{
     char* ressource_name[10]; // nom de ressource
     RESSOURCE* ressource; // type ooubien l enum
     bool disponibilite; // dispo ou non 1 / 0
@@ -25,8 +25,8 @@ typedef enum {
     NOT_STARTED, EXECUTING, BLOCKED, COMPLETED
 } INSTRUCTION_STATE;
 
-typedef struct {
-    uint32_t instruct_id; // the id of instruction because process can stop at it if need ressources 
+typedef struct INSTRUCTION{
+    int instruct_id; // the id of instruction because process can stop at it if need ressources 
     int process_it; // the id of the process owner
 
     float time_remaining; // in nano seconds
@@ -34,7 +34,7 @@ typedef struct {
     INSTRUCTION_STATE* state; // state of instruction 
 } INSTRUCTION;
 
-typedef struct {
+typedef struct PROCESS_STATISTICS {
     struct tm temps_arrive; // located in time.h
     struct tm temps_creation;
     struct tm temps_fin;
@@ -43,7 +43,7 @@ typedef struct {
     int tournround; // temps terminer - temps arrive
 } PROCESS_STATISTICS;
 
-typedef struct {
+typedef struct PCB {
     int pid;
     char process_name[20];
     char user_id[20];
@@ -64,17 +64,17 @@ typedef struct {
     PROCESS_STATISTICS statistics;
 
     int* pid_childrens;
-    PCB* pid_sibling_next; // pointeur vers next sib
-    PCB* pid_sibling_previous; // pointeur vers previous sib
+    struct PCB* pid_sibling_next; // pointeur vers next sib
+    struct PCB* pid_sibling_previous; // pointeur vers previous sib
 } PCB;
 
 // structures nedded par les fonctions du process_manager
-typedef struct { // used by process manager: many iteraction over process list but obe contact with ready queue for time reducing
+typedef struct pcb_list { // used by process manager: many iteraction over process list but obe contact with ready queue for time reducing
     PCB* first_element;
     int size;
 } pcb_list; // stand for pcb first came
 
-typedef struct {
+typedef struct PROCESS_TABLE{
     int pid; // l identifier du processus
     PCB* pcb; // l id du pcb du processus
 } PROCESS_TABLE;

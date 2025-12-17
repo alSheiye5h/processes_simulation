@@ -6,4 +6,6 @@ search for need_to_be_changed
 
 process_name(20),user_id(20),priority(from 1 to 5),[instruction max 20000 3char each shouldnt have spaces separated by',' instructions in those brackets '[]' uppercase ex:"AAA","BBB"](string),n_instruction(int),memoire(int),burst(float)
 
+20 char + 20 char + int +60000char +19999char + int + int + float = 80055bytes
+
 

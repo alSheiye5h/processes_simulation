@@ -11,7 +11,7 @@
 //     PCB* first_element;
 // } pcb_list; // stand for pcb first came
 
-typedef struct {
+typedef struct PROCESS_TABLE_ELEMENT{
     int pid; // l identifier du processus
     PCB* pcb; // l id du pcb du processus
     PROCESS_TABLE_ELEMENT* next;
@@ -32,7 +32,7 @@ typedef struct READY_QUEUE_ELEMENT {
 // } READY_QUEUE;
 
 
-typedef struct {
+typedef struct BLOCKED_QUEUE_ELEMENT {
     PCB* pcb; // l pointeur du processus
     RESSOURCE_ELEMENT* ressource; // ressource needed to execute the instruction
     struct BLOCKED_QUEUE_ELEMENT next;
@@ -45,12 +45,12 @@ typedef struct {
 // } BLOCKED_QUEUE;
 
 // get_all_processus & sort function helper
-typedef struct {
+typedef struct pcbs_and_size {
     PCB* first;
     int size;
 } pcbs_and_size;
 
-typedef struct {
+typedef struct PROCESS_MANAGER{
     PROCESS_TABLE_ELEMENT* process_table_head; // pointeur vers process table
     int process_count; // n processes
     READY_QUEUE_ELEMENT* ready_queue_head; // pointer to ready chaine can be circular for RR
@@ -70,7 +70,7 @@ typedef struct {
     READY_QUEUE_ELEMENT* (*sort_by_rt)(READY_QUEUE_ELEMENT* ready_queue_head); // process_list by get_all_processus
     READY_QUEUE_ELEMENT* (*sort_by_priority)(READY_QUEUE_ELEMENT* ready_queue_head);  // same
     READY_QUEUE_ELEMENT* (*sort_by_burst)(READY_QUEUE_ELEMENT* ready_queue_head); // same
-    PROCESS_TABLE* (*push_all_to_process_table)(PROCESS_TABLE* process_table);  // list got by the sorting function
+    PROCESS_TABLE_ELEMENT* (*push_all_to_process_table)(PROCESS_TABLE_ELEMENT* process_table);  // list got by the sorting function
 
     //pcb related
     PCB* (*update_process)(PCB* pcb, struct tm temps_arrive, struct tm temps_fin, float cpu_temps_used, float temps_attente, int cpu_usage); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 
 typedef enum {
     AAA, BBB, CCC, DDD, EEE, FFF

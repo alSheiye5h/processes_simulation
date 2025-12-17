@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "structs/ressource.h" 
+#include "structs/process.h" 
 #include <time.h>
 #include <stdbool.h>
 #include "structs/ressource.h" // for ressource enum
@@ -12,9 +12,11 @@ typedef enum {
 
 
 typedef enum {
-    NOT_STARTED, EXECUTING, BLOCKED, COMPLETED
+    NOT_STARTED, EXECUTING, STOPPED, COMPLETED
 } INSTRUCTION_STATE;
 
+
+typedef struct PCB PCB;
 
 typedef struct INSTRUCTION{
     int instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
@@ -26,7 +28,7 @@ typedef struct INSTRUCTION{
     struct INSTRUCTION* next;
 } INSTRUCTION;
 
-typedef struct {
+typedef struct PROCESS_STATISTICS{
     time_t temps_arrive; // located in time.h
     time_t temps_creation;
     time_t temps_fin;
@@ -35,7 +37,7 @@ typedef struct {
     int tournround; // temps terminer - temps arrive
 } PROCESS_STATISTICS;
 
-typedef struct {
+typedef struct PCB {
     int pid;
     char process_name[20];
     char user_id[20];
