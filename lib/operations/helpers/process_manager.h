@@ -31,7 +31,7 @@ typedef struct parser_return {
     int instructions_count;
     int memoire;
     float burst;
-    time_t temps_creation;
+    float temps_creation;
     float temps_arrive;
     bool unvalid_process_csv_check;
 } parser_return;
@@ -62,7 +62,12 @@ bool check_known_ressource(char ressource[]) {
             break;
         }
     }
-    return (flag == 1) ? true : false;
+
+    if (flag == 1) 
+        return true;
+    else
+        return false;
+
 }
 
 void free_instructions_chaine(INSTRUCTION* instruct_head) {
@@ -155,6 +160,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
             }
             
             parser_return* paresed_buffer = parser_func(line_pcb); // intializing the returned struct after parsing a line
+
             
             // BULLTY return from parser_func vide or space
             if (paresed_buffer == NULL) {
@@ -165,6 +171,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
             
             PCB* pcb = (PCB*)malloc(sizeof(PCB)); // initializing the pcb
             PROCESS_STATISTICS* statistics = (PROCESS_STATISTICS*)malloc(sizeof(PROCESS_STATISTICS)); // allocate statistics for the pcb
+
             
             if (paresed_buffer == NULL) {
                 fprintf(stderr, "ERROR ON: parser function extract_from_buffer parser_func returned NULL for non-empty line\n");
@@ -191,8 +198,6 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
             memset(pcb, 0, sizeof(PCB));
             memset(statistics, 0, sizeof(PROCESS_STATISTICS));
             
-            // assign statistics to it's pcb
-            pcb->statistics = statistics;
 
             // copy the process name - do this BEFORE checking length
             if (strlen(paresed_buffer->process_name) > 20) { // if the process name from parsed buffer > 20 (the allowed on pcb struct)
@@ -217,6 +222,10 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
             }
 
             if (paresed_buffer->unvalid_process_csv_check == false) {
+
+                // assing statistics
+                pcb->statistics = statistics;
+                
                 pcb->pid = process_count;
 
                 strncpy(pcb->user_id, paresed_buffer->user_id, sizeof(pcb->user_id) - 1); // copy just the size of process_name 
@@ -259,6 +268,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
                 char_count = 0;
                 size_t buffer_size = 128;
                 line_pcb = (char*)realloc(line_pcb, buffer_size);
+                
                 if (line_pcb == NULL) {
                     fprintf(stderr, "ERROR ON: extract_from_buffer failed to reallocate line buffer\n");
                     exit(1);
@@ -307,7 +317,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
         }
     }
 
-    // if file doesnt end with new line need handle
+       // if file doesnt end with new line need handle
     if (char_count > 0) {
         line_pcb[char_count] = '\0';
         
@@ -341,9 +351,9 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
                     pcb->memoire_necessaire = paresed_buffer->memoire;
                     pcb->current_instruction = NULL;
                     pcb->burst_time = paresed_buffer->burst;
-                    // pcb->statistics->temps_arrive = paresed_buffer->temps_arrive;
                     pcb->statistics->temps_creation = paresed_buffer->temps_creation;
                     pcb->statistics->temps_arrive = paresed_buffer->temps_arrive;
+                    pcb->remaining_time = paresed_buffer->burst;
                     pcb->pid_sibling_next = NULL;
                     
                     free(paresed_buffer);
@@ -353,6 +363,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
                         pcb_chaine_head = pcb;
                         pcb_chaine_end = pcb;
                         pcb_flag = 1;
+
                     } else {
                         if (pcb_chaine_end != NULL) {
                             pcb_chaine_end->pid_sibling_next = pcb;
@@ -367,8 +378,9 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
             } else if (paresed_buffer != NULL) {
                 free_parsed_buffer(paresed_buffer);
             }
-        }
-    }
+        } // <-- ADD THIS BRACE to close: if (char_count > 0) inside the outer if
+
+    } // <-- ADD THIS BRACE to close: if (char_count > 0) outer block
 
     free(line_pcb); // after EOF free the line
 
@@ -377,7 +389,7 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
 
 
 
-   
+
 // parser_return* parser_func(char* line) {
 
 //     parser_return* parsed_line = (parser_return*)malloc(sizeof(parser_return));
@@ -675,6 +687,8 @@ PCB* extract_from_buffer(FILE* csv_buffer) {
 //     return parsed_line;
 // }
 
+
+
 parser_return* parser_func(char* line) {
     parser_return* parsed_line = (parser_return*)malloc(sizeof(parser_return));
     // Initialize all fields
@@ -885,8 +899,8 @@ parser_return* parser_func(char* line) {
                 case 7:
                     // This is the arrival time field
                     float temp_arrive = strtof(value, NULL);
-                    parsed_line->unvalid_process_csv_check = false;
                     parsed_line->temps_arrive = temp_arrive;
+                    parsed_line->unvalid_process_csv_check = false; // last field is present and valid so valid process
                     break;
                     
                 default:
@@ -912,16 +926,25 @@ parser_return* parser_func(char* line) {
     // Check if we got all required fields (8 fields)
     if (value_number < 8) {
         fprintf(stderr, "ERROR ON: parser function incomplete line, got %d fields need 8\n", value_number);
+    }
+    if (value_number != 8) {
+        fprintf(stderr, "ERROR ON: parser function incomplete line, got %d fields but expected 8 in line: %s\n", value_number, line);
         free_instructions_chaine(parsed_line->instructions_head);
         free(parsed_line);
         free(value);
         exit(1);
     }
     
-    if (value) free(value);
-    
+    // parsed_line->unvalid_process_csv_check = false;    
+    if (value) {
+        free(value);
+    }
+    parsed_line->unvalid_process_csv_check = false;    
+
     return parsed_line;
 }
+
+
 
 insruction_parser_return* instruction_parser(char* value) { // retrieve instruction name .. value is the instructions line
     if (value[0] == '\0' || value[0] != '[') { // we already checked NULLTY, check string hadi jsp ida kan khawi to make sure and check instruction line satts with '['

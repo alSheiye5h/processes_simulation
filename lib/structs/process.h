@@ -29,9 +29,9 @@ typedef struct INSTRUCTION{
 } INSTRUCTION;
 
 typedef struct PROCESS_STATISTICS{
-    time_t temps_arrive; // located in time.h
-    time_t temps_creation;
-    time_t temps_fin;
+    float temps_arrive; // located in time.h
+    float temps_creation;
+    float temps_fin;
     
     float temps_attente; // gap entre temps arrive & temps exec // need to be init 0
     float tournround; // temps terminer - temps arrive

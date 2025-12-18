@@ -53,8 +53,21 @@ PCB* op_create_ready_queue(bool circular, PCB* pcb) {  // we dont pass the algo 
         exit(1);
     }
 
-    // now we copy all the data
+    // Perform a deep copy of the PCB
     *ready_queue_head = *pcb;
+    // Allocate new memory for statistics and copy the data
+    ready_queue_head->statistics = (PROCESS_STATISTICS*)malloc(sizeof(PROCESS_STATISTICS));
+    if (ready_queue_head->statistics == NULL) {
+        fprintf(stderr, "ERROR ON: op_create_ready_queue, ready_queue_head->statistics allocation returned NULL\n");
+        free(ready_queue_head);
+        exit(1);
+    }
+    if (pcb->statistics != NULL) {
+        *(ready_queue_head->statistics) = *(pcb->statistics);
+    } else {
+        // Handle case where original statistics is NULL, maybe just zero it out
+        memset(ready_queue_head->statistics, 0, sizeof(PROCESS_STATISTICS));
+    }
 
     PCB* list_pcb_head_next = pcb->pid_sibling_next; // because we already have the first lement
     PCB* ready_pcb_head = ready_queue_head;
@@ -76,8 +89,21 @@ PCB* op_create_ready_queue(bool circular, PCB* pcb) {  // we dont pass the algo 
             exit(1);
         }
 
-        // copy all data
+        // Perform a deep copy of the PCB
         *next_node = *list_pcb_head_next;
+        // Allocate new memory for statistics and copy the data
+        next_node->statistics = (PROCESS_STATISTICS*)malloc(sizeof(PROCESS_STATISTICS));
+        if (next_node->statistics == NULL) {
+            fprintf(stderr, "ERROR ON: op_create_ready_queue, next_node->statistics allocation returned NULL\n");
+            // Proper cleanup needed here
+            exit(1);
+        }
+        if (list_pcb_head_next->statistics != NULL) {
+            *(next_node->statistics) = *(list_pcb_head_next->statistics);
+        } else {
+            memset(next_node->statistics, 0, sizeof(PROCESS_STATISTICS));
+        }
+
 
         // chained it
         ready_pcb_head->pid_sibling_next = next_node;

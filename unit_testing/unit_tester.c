@@ -48,9 +48,7 @@ void print_pcb(PCB* pcb) {
         }
         TEMP = TEMP->next;
     }
-    free(TEMP);
     // kob lia hloben a wliidi raho khdem
-    
 }
 
 PCB* testing_the_csv_parsing() {
@@ -74,10 +72,10 @@ PCB* testing_the_csv_parsing() {
 
     PCB* pcb_head = extract_from_buffer(csv_buffer);
 
-    // while (pcb_head != NULL) {
-    //     print_pcb(pcb_head);
-    //     pcb_head = pcb_head->pid_sibling_next;
-    // }
+    while (pcb_head != NULL) {
+        pcb_head = pcb_head->pid_sibling_next;
+        // print_pcb(pcb_head);
+    }
 
     return pcb_head;
 
@@ -124,13 +122,9 @@ void testing_process_table_creation_and_ready_queue() {
         print_pcb(sorted_ready_queue);
         sorted_ready_queue = sorted_ready_queue->pid_sibling_next;
     }
-}   
+}
 
 // testing process manager functions
-
-
-
-
 
 
 /*
@@ -141,9 +135,9 @@ gcc -Wall -Wextra -std=c11 \
     -I./lib/structs \
     "unit_testing/unit_tester.c" \
     -o unit_test
-
+  
 */
-
+  
 int main() {
 
     // testing_process_table_creation_and_ready_queue();
