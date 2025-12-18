@@ -249,6 +249,7 @@ PCB* op_sort_ready_by_burst(PCB* ready_queue_head) {
         fprintf(stderr, "ERROR ON: op_sort_ready_by_priority , ready_queue_head is NULL\n");
         exit(1);
     }
+    
     PCB* sorted_head = NULL;
     PCB* current = ready_queue_head; // node that will contain the proces arrived before current
 

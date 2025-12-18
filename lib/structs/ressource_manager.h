@@ -12,7 +12,7 @@ typedef struct {
 
     //functions
     // on start
-    RESSOURCES_LIST* (*create_ressource_list)(void);
+    RESSOURCE_ELEMENT* (*create_ressource_list)(void);
 
     // ressources operations
     RESSOURCE_ELEMENT* (*look_for_ressource_in_list)(char* ressource_name);

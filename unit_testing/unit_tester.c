@@ -52,33 +52,26 @@ void print_pcb(PCB* pcb) {
 }
 
 PCB* testing_the_csv_parsing() {
-
-    // heap allocated buffer
-    size_t size = 10 * 1024 * 1024; // 10mbytes
-
-    char* buffer_ = (char*)malloc(size);
-
-    if (!buffer_) {
-        fprintf(stderr, "ERROR ON: error while allocating the buffer before reading csv\n");
-        exit(1);
-    }
-
     FILE* csv_buffer = fopen("/home/zeus/projects/processus_simulation/unit_testing/csv_testin_parocess_manager_parsing.csv", "r");
 
     if (!csv_buffer) {
-        perror("ERROR ON: error while reading csv\n");
+        perror("ERROR ON: error while opening csv file\n");
         exit(1);
     }
 
     PCB* pcb_head = extract_from_buffer(csv_buffer);
+    
+    fclose(csv_buffer);  // Close the file
 
-    while (pcb_head != NULL) {
-        pcb_head = pcb_head->pid_sibling_next;
-        // print_pcb(pcb_head);
+    // Test printing all PCBs
+    PCB* current = pcb_head;
+    while (current != NULL) {
+        // print_pcb(current);  // Uncomment when you have this function
+        printf("PCB PID: %d, Name: %s\n", current->pid, current->process_name);
+        current = current->pid_sibling_next;
     }
 
-    return pcb_head;
-
+    return pcb_head;  // Return the head of the list
 }
 
 // testing the process table creation and ready queue sorting fcfs
@@ -124,8 +117,11 @@ void testing_process_table_creation_and_ready_queue() {
     }
 }
 
-// testing process manager functions
+// testing the ressource creator
 
+void testing_ressource_creator() {
+    RESSOURCE_ELEMENT* ressources_head =  op_create_ressource_list();
+}
 
 /*
 gcc -Wall -Wextra -std=c11 \
@@ -138,15 +134,16 @@ gcc -Wall -Wextra -std=c11 \
   
 */
   
+
 int main() {
 
-    // testing_process_table_creation_and_ready_queue();
+    // testing_process_table_creation_and_ready_queue(); // parsed is very vawy vawygood
 
-    PCB* pc = testing_the_csv_parsing();
-    while (pc != NULL) {
-        print_pcb(pc);
-        pc = pc->pid_sibling_next;
-    }
+    // PCB* pc = testing_the_csv_parsing();
+    // while (pc != NULL) {
+    //     print_pcb(pc);
+    //     pc = pc->pid_sibling_next;
+    // }
 
     return 0;
 }
