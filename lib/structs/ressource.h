@@ -10,5 +10,5 @@ typedef struct {
     char ressource_name[10]; // nom de ressource
     RESSOURCE ressource; // type 
     bool disponibilite; // dispo ou non 1 / 0
-    RESSOURCE_ELEMENT* next_ressource;
+    struct RESSOURCE_ELEMENT* next_ressource;
 } RESSOURCE_ELEMENT;

@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-int ressource_number = 6;
+#define ressource_number 6
 
 
 // typedef struct {
@@ -20,58 +20,50 @@ int ressource_number = 6;
 
 // on start
 RESSOURCE_ELEMENT* op_create_ressource_list(void) {
-    RESSOURCE_ELEMENT* ressources_head = (RESSOURCE_ELEMENT*)malloc(sizeof(RESSOURCE_ELEMENT)); // init the head
+    RESSOURCE_ELEMENT* ressources_head = NULL;
 
-    if (ressources_head == NULL) { // check allocation
-        printf("ERROR ON: op_create_ressource_list failed to allocate ressources head");
-        exit(1);
-    }
-
-    RESSOURCE_ELEMENT* TEMP1 = ressources_head;
-
-    // enum_size should update this when updating ressources // change var
+    char* ressource_names[] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
 
     for (int i = 0; i < ressource_number; i++) {
+
         RESSOURCE_ELEMENT* node = (RESSOURCE_ELEMENT*)malloc(sizeof(RESSOURCE_ELEMENT));
+
         if (node == NULL) {  // CHECK FAIL
             printf("ERROR ON: op_create_ressource_list failed to allocate new node");
+            // if a node has failed the ressource head should be freed
+            while(ressources_head != NULL) {
+                RESSOURCE_ELEMENT* temp = ressources_head;
+                ressources_head = ressources_head->next_ressource;
+                free(temp);
+            }
             exit(1);
         }
-        if (i == 5)
-            TEMP1->next_ressource = NULL;
-        else {
-            TEMP1->next_ressource = node;
-            TEMP1 = TEMP1->next_ressource;
-        }
-    }
-    
-    RESSOURCE_ELEMENT* TEMP = ressources_head;
 
-
-    while (TEMP != NULL) {
-
-        switch (TEMP->ressource) {
+        switch (i) { // cant make ressource = i because i is int ressource is an enum
             case 0:
-                strcpy(TEMP->ressource_name, "AAA");
+                node->ressource == AAA;
                 break;
-            case 1: 
-                strcpy(TEMP->ressource_name, "BBB");
+            case 1:
+                node->ressource= BBB;
                 break;
-            case 2: 
-                strcpy(TEMP->ressource_name, "CCC");
+            case 2:
+                node->ressource = CCC;
                 break;
-            case 3: 
-                strcpy(TEMP->ressource_name, "DDD");
+            case 3:
+                node->ressource = DDD;
                 break;
-            case 4: 
-                strcpy(TEMP->ressource_name, "EEE");
+            case 4:
+                node->ressource = EEE;
                 break;
-            case 5: 
-                strcpy(TEMP->ressource_name, "FFF");
+            case 5:
+                node->ressource = FFF;
                 break;
         }
 
-        TEMP = TEMP->next_ressource;
+        strcpy(node->ressource_name, ressource_names[i]);
+        node->disponibilite = true; // true when ylh created
+        node->next_ressource = NULL;
+
     }
 
     return ressources_head;
@@ -79,19 +71,59 @@ RESSOURCE_ELEMENT* op_create_ressource_list(void) {
 
 
 // ressources operations
-RESSOURCE_ELEMENT* op_look_for_ressource_in_list(char* ressource_name) {
+RESSOURCE_ELEMENT* op_look_for_ressource_in_list(RESSOURCE_ELEMENT* ressources_head, RESSOURCE ressource) {
 
+    RESSOURCE_ELEMENT* head = ressources_head;
+
+    while (head != NULL) {
+        if (head->ressource == ressource) {
+            return head;
+        }
+        head = head->next_ressource;
+    }
+
+    return NULL;
 }
 
-bool op_mark_ressource_available(RESSOURCE* ressource) {
+bool op_mark_ressource_available(RESSOURCE_ELEMENT* ressources_head,RESSOURCE ressource) {
 
+    RESSOURCE_ELEMENT* head = ressources_head;
+
+    while (head != NULL) {
+        if (head->ressource == ressource) { // if found
+            head->disponibilite = true;
+            return true;
+        }
+        head = head->next_ressource;
+    }
+
+    return NULL;
 }
 
-bool op_mark_ressource_unavailable(RESSOURCE* ressource) {
+bool op_mark_ressource_unavailable(RESSOURCE_ELEMENT* ressources_head, RESSOURCE* ressource) {
 
+    RESSOURCE_ELEMENT* head = ressources_head;
+
+    while (head != NULL) {
+        if (head->ressource == ressource && head->disponibilite == false) { // when found and it's not disponible
+            return true;
+        }
+        head = head->next_ressource;
+    }
+
+    return false;
 }
 
-bool op_check_if_ressource_available(RESSOURCE* ressource) {
+bool op_check_if_ressource_available(RESSOURCE_ELEMENT* ressources_head, RESSOURCE* ressource) {
+    
+    RESSOURCE_ELEMENT* head = ressources_head;
 
+    while (head != NULL) {
+        if (head->ressource == ressource && head->disponibilite == true) { // when found
+            return true;
+        }
+        head = head->next_ressource;
+    }
 
+    return NULL;
 }

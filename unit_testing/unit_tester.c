@@ -5,6 +5,7 @@
 
 #include "operations/helpers/process_manager.h"
 #include "operations/process_manager.h"
+#include "operations/ressource_manager.h"
 #include "structs/process.h"
 
 void print_pcb(PCB* pcb) {
@@ -119,9 +120,23 @@ void testing_process_table_creation_and_ready_queue() {
 
 // testing the ressource creator
 
-void testing_ressource_creator() {
-    RESSOURCE_ELEMENT* ressources_head =  op_create_ressource_list();
+RESSOURCE_ELEMENT* testing_ressource_creator() {
+
+    RESSOURCE_ELEMENT* ressources_head = op_create_ressource_list();
+
+    if (ressources_head == NULL) {
+        fprintf(stderr, "ERROR ON: error while allocating the ressources_head\n");
+        exit(1);
+    }
+
+    while (ressources_head != NULL) {
+        printf("ressource name: %s\n", ressources_head->ressource_name);
+        ressources_head = ressources_head->next_ressource;
+    }
+
+    return ressources_head;
 }
+
 
 /*
 gcc -Wall -Wextra -std=c11 \
@@ -144,6 +159,16 @@ int main() {
     //     print_pcb(pc);
     //     pc = pc->pid_sibling_next;
     // }
+
+    RESSOURCE_ELEMENT* ressources_head = testing_ressource_creator();
+
+    op_mark_ressource_unavailable(ressources_head, CCC);
+
+    printf("disponibility : %d\n", (op_check_ressource_disponibility(ressources_head, CCC)) ? 1 : 0 );
+
+    op_mark_ressource_available(ressources_head, CCC);
+
+    printf("disponibility : %d\n", (op_check_ressource_disponibility(ressources_head, CCC)) ? 1 : 0 );
 
     return 0;
 }
