@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 #include "structs/process_manager.h"
+#include "operations/process_manager.h"
 #include "structs/process.h"
 #include "operations/helpers/process_manager.h"
 #include "operations/process.h"
@@ -231,7 +232,7 @@ PCB* op_sort_ready_by_priority(PCB* ready_queue_head) {
             // find the pointer where it inserted
             PCB* search = sorted_head;
             while (search->pid_sibling_next != NULL && // if the search has reach the end
-                    search->pid_sibling_next->prioritie < current->remaining_time) { // or if the searched value's temps arrive is < that current 
+                    search->pid_sibling_next->prioritie < current->prioritie) { // or if the searched value's temps arrive is < that current 
                 search = search->pid_sibling_next;
             }
 
@@ -249,7 +250,7 @@ PCB* op_sort_ready_by_burst(PCB* ready_queue_head) {
         fprintf(stderr, "ERROR ON: op_sort_ready_by_priority , ready_queue_head is NULL\n");
         exit(1);
     }
-    
+
     PCB* sorted_head = NULL;
     PCB* current = ready_queue_head; // node that will contain the proces arrived before current
 

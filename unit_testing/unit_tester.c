@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 #include "operations/helpers/process_manager.h"
-#include "operations/process_manager.h"
 #include "operations/ressource_manager.h"
 #include "structs/process.h"
 
@@ -52,89 +51,91 @@ void print_pcb(PCB* pcb) {
     // kob lia hloben a wliidi raho khdem
 }
 
-PCB* testing_the_csv_parsing() {
-    FILE* csv_buffer = fopen("/home/zeus/projects/processus_simulation/unit_testing/csv_testin_parocess_manager_parsing.csv", "r");
+// PCB* testing_the_csv_parsing() {
+//     FILE* csv_buffer = fopen("/home/zeus/projects/processus_simulation/unit_testing/csv_testin_parocess_manager_parsing.csv", "r");
 
-    if (!csv_buffer) {
-        perror("ERROR ON: error while opening csv file\n");
-        exit(1);
-    }
+//     if (!csv_buffer) {
+//         perror("ERROR ON: error while opening csv file\n");
+//         exit(1);
+//     }
 
-    PCB* pcb_head = extract_from_buffer(csv_buffer);
+//     PCB* pcb_head = extract_from_buffer(csv_buffer);
     
-    fclose(csv_buffer);  // Close the file
+//     fclose(csv_buffer);  // Close the file
 
-    // Test printing all PCBs
-    PCB* current = pcb_head;
-    while (current != NULL) {
-        // print_pcb(current);  // Uncomment when you have this function
-        printf("PCB PID: %d, Name: %s\n", current->pid, current->process_name);
-        current = current->pid_sibling_next;
-    }
+//     // Test printing all PCBs
+//     PCB* current = pcb_head;
+//     while (current != NULL) {
+//         // print_pcb(current);  // Uncomment when you have this function
+//         printf("PCB PID: %d, Name: %s\n", current->pid, current->process_name);
+//         current = current->pid_sibling_next;
+//     }
 
-    return pcb_head;  // Return the head of the list
-}
+//     return pcb_head;  // Return the head of the list
+// }
 
-// testing the process table creation and ready queue sorting fcfs
-void testing_process_table_creation_and_ready_queue() {
+// // testing the process table creation and ready queue sorting fcfs
+// void testing_process_table_creation_and_ready_queue() {
 
-    PCB* head = testing_the_csv_parsing();
+//     PCB* head = testing_the_csv_parsing();
 
-    if (head == NULL) {
-        fprintf(stderr, "ERROR ON: error while allocating the head before reading csv\n");
-        exit(1);
-    }
+//     if (head == NULL) {
+//         fprintf(stderr, "ERROR ON: error while allocating the head before reading csv\n");
+//         exit(1);
+//     }
 
-    PCB* ready_queue = op_create_ready_queue(false, head);
+//     PCB* ready_queue = op_create_ready_queue(false, head);
 
-    if (ready_queue == NULL) {
-        fprintf(stderr, "ERROR ON: error while allocating the ready_queue before reading csv\n");
-        exit(1);
-    }
-
-
-
-    PCB* sorted_ready_queue = op_sort_ready_by_fc(ready_queue, false);
-
-    if (sorted_ready_queue == NULL) {
-        fprintf(stderr, "ERROR ON: error while allocating the sorted_ready_queue before reading csv\n");
-        exit(1);
-    }
-
-    // till here all is good
+//     if (ready_queue == NULL) {
+//         fprintf(stderr, "ERROR ON: error while allocating the ready_queue before reading csv\n");
+//         exit(1);
+//     }
 
 
-    // PCB* sorted_rt = (PCB*)op_sort_ready_by_rt(ready_queue);
-    // printf("sort by rt\n");
 
-    // while (ready_queue != NULL) {
-    //     print_pcb(ready_queue);
-    //     ready_queue = ready_queue->pid_sibling_next;
-    // }
+//     PCB* sorted_ready_queue = op_sort_ready_by_fc(ready_queue, false);
 
-    while (sorted_ready_queue != NULL) {
-        print_pcb(sorted_ready_queue);
-        sorted_ready_queue = sorted_ready_queue->pid_sibling_next;
-    }
-}
+//     if (sorted_ready_queue == NULL) {
+//         fprintf(stderr, "ERROR ON: error while allocating the sorted_ready_queue before reading csv\n");
+//         exit(1);
+//     }
+
+//     // till here all is good
+
+
+//     // PCB* sorted_rt = (PCB*)op_sort_ready_by_rt(ready_queue);
+//     // printf("sort by rt\n");
+
+//     // while (ready_queue != NULL) {
+//     //     print_pcb(ready_queue);
+//     //     ready_queue = ready_queue->pid_sibling_next;
+//     // }
+
+//     while (sorted_ready_queue != NULL) {
+//         print_pcb(sorted_ready_queue);
+//         sorted_ready_queue = sorted_ready_queue->pid_sibling_next;
+//     }
+// }
+
 
 // testing the ressource creator
-
 RESSOURCE_ELEMENT* testing_ressource_creator() {
 
-    RESSOURCE_ELEMENT* ressources_head = op_create_ressource_list();
+    RESSOURCE_ELEMENT* head = op_create_ressource_list();
 
-    if (ressources_head == NULL) {
+    if (head == NULL) {
         fprintf(stderr, "ERROR ON: error while allocating the ressources_head\n");
         exit(1);
     }
 
+    RESSOURCE_ELEMENT* ressources_head = head;
+    
     while (ressources_head != NULL) {
         printf("ressource name: %s\n", ressources_head->ressource_name);
         ressources_head = ressources_head->next_ressource;
     }
 
-    return ressources_head;
+    return head;
 }
 
 
@@ -145,6 +146,9 @@ gcc -Wall -Wextra -std=c11 \
     -I./lib/operations/helpers \
     -I./lib/structs \
     "unit_testing/unit_tester.c" \
+    "lib/operations/helpers/process_manager.c" \
+    "lib/operations/process_manager.c" \
+    "lib/operations/ressource_manager.c" \
     -o unit_test
   
 */
@@ -164,11 +168,14 @@ int main() {
 
     op_mark_ressource_unavailable(ressources_head, CCC);
 
-    printf("disponibility : %d\n", (op_check_ressource_disponibility(ressources_head, CCC)) ? 1 : 0 );
+    printf("disponibility : %d\n", op_check_if_ressource_available(ressources_head, CCC));
 
     op_mark_ressource_available(ressources_head, CCC);
+    printf("disponibility : %d\n", op_check_if_ressource_available(ressources_head, CCC));
 
-    printf("disponibility : %d\n", (op_check_ressource_disponibility(ressources_head, CCC)) ? 1 : 0 );
+    op_mark_ressource_unavailable(ressources_head, CCC);
+
+    printf("disponibility : %d\n", op_check_if_ressource_available(ressources_head, CCC));
 
     return 0;
 }

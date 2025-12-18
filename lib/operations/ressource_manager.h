@@ -21,6 +21,7 @@
 // on start
 RESSOURCE_ELEMENT* op_create_ressource_list(void) {
     RESSOURCE_ELEMENT* ressources_head = NULL;
+    RESSOURCE_ELEMENT* last = NULL; // for the loop
 
     char* ressource_names[] = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"};
 
@@ -39,31 +40,20 @@ RESSOURCE_ELEMENT* op_create_ressource_list(void) {
             exit(1);
         }
 
-        switch (i) { // cant make ressource = i because i is int ressource is an enum
-            case 0:
-                node->ressource == AAA;
-                break;
-            case 1:
-                node->ressource= BBB;
-                break;
-            case 2:
-                node->ressource = CCC;
-                break;
-            case 3:
-                node->ressource = DDD;
-                break;
-            case 4:
-                node->ressource = EEE;
-                break;
-            case 5:
-                node->ressource = FFF;
-                break;
-        }
-
+        node->ressource = (RESSOURCE)i; // Direct cast is cleaner
         strcpy(node->ressource_name, ressource_names[i]);
         node->disponibilite = true; // true when ylh created
         node->next_ressource = NULL;
 
+        if (ressources_head == NULL) {
+            // If the list is empty, this node is the head
+            ressources_head = node;
+            last = node;
+        } else {
+            // Otherwise, append to the end of the list
+            last->next_ressource = node;
+            last = node;
+        }
     }
 
     return ressources_head;
@@ -97,15 +87,16 @@ bool op_mark_ressource_available(RESSOURCE_ELEMENT* ressources_head,RESSOURCE re
         head = head->next_ressource;
     }
 
-    return NULL;
+    return false;
 }
 
-bool op_mark_ressource_unavailable(RESSOURCE_ELEMENT* ressources_head, RESSOURCE* ressource) {
+bool op_mark_ressource_unavailable(RESSOURCE_ELEMENT* ressources_head, RESSOURCE ressource) {
 
     RESSOURCE_ELEMENT* head = ressources_head;
 
     while (head != NULL) {
-        if (head->ressource == ressource && head->disponibilite == false) { // when found and it's not disponible
+        if (head->ressource == ressource) { // when found
+            head->disponibilite = false;
             return true;
         }
         head = head->next_ressource;
@@ -114,16 +105,16 @@ bool op_mark_ressource_unavailable(RESSOURCE_ELEMENT* ressources_head, RESSOURCE
     return false;
 }
 
-bool op_check_if_ressource_available(RESSOURCE_ELEMENT* ressources_head, RESSOURCE* ressource) {
+bool op_check_if_ressource_available(RESSOURCE_ELEMENT* ressources_head, RESSOURCE ressource) {
     
     RESSOURCE_ELEMENT* head = ressources_head;
 
     while (head != NULL) {
-        if (head->ressource == ressource && head->disponibilite == true) { // when found
-            return true;
+        if (head->ressource == ressource) { // when found
+            return head->disponibilite;
         }
         head = head->next_ressource;
     }
 
-    return NULL;
+    return false;
 }
