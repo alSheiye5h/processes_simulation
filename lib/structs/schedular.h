@@ -63,6 +63,9 @@ typedef struct {
     // update statistics
     bool (*update_schedular_statistics) (ORDONNANCEUR_STATISTICS* schedular, float cpu_total_temps_usage, float cpu_temps_unoccupied, int context_switch, float total_temps_attente, float process_termine_count, float throughtput); // must check nullty
 
+    // check instruction disponibility
+    bool (*check_instruction_disponibility) (ORDONNANCEUR* self, INSTRUCTION* instruction);
+
 } ORDONNANCEUR;
 
 // like n9dr n3ti l ordonnanceur process i3tih l execution_queue

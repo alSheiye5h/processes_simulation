@@ -95,4 +95,7 @@ typedef struct {
     // process_manager & schedular related functions
     bool (*update_cpu_time_used)(PCB* process, float inc);
 
+    // check instruction disponibility
+    bool (*check_instruction_disponibility) (SIMULATOR* self, INSTRUCTION* instruction);
+
 } SIMULATOR;

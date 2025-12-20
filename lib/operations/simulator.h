@@ -55,3 +55,8 @@ bool op_signal_ressource_is_free(RESSOURCE_ELEMENT* ressource) {
 bool op_update_cpu_time_used(PCB* process, float inc) {
 
 }
+
+
+bool op_sched_check_instruction_disponibility(INSTRUCTION* instruction) {
+
+}
