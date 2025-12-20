@@ -26,6 +26,7 @@ typedef struct EXECUTION_QUEUE {
     float quantum;
 
     //function
+    INSTRUCTION* (*next_instruction) (PCB* pcb);
     EXECUTION_RESULT* (*execute_instruction) (INSTRUCTION* instruction, float quantum);
 
 } EXECUTION_QUEUE;

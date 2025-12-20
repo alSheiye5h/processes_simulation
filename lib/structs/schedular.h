@@ -12,7 +12,8 @@ typedef enum {
 } Algorithms;
 
 typedef struct {
-    float cpu_total_temps_usage; // somme temps cpu occup total de tout process 
+
+    float cpu_total_temps_usage; // somme temps cpu occup total de tout process
     float cpu_temps_unoccuped; // temps total ou cpu n etait pas utilisé
     int context_switch; // nombre total de changement de processus
     float total_temps_attente; // somme temps waiting de tout processus
@@ -23,6 +24,7 @@ typedef struct {
     float troughtput; // processus terminé / total temps en ms
 
     PCB* current_processus; // processus en cours d execution
+    
 } ORDONNANCEUR_STATISTICS;
 
 typedef struct {
