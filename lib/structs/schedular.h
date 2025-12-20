@@ -29,7 +29,7 @@ typedef struct {
     PCB* exec_proc; // processus en train de s'executer
     int current_pid; // pid du processus en cours d'exec
     
-    int quantum; // quantum de time pour RR
+    float quantum; // quantum de time pour RR
     struct tm start;
     struct tm end;
     int cpu_time_used; // en ms: end - start

@@ -25,7 +25,8 @@ typedef struct EXECUTION_QUEUE {
     PCB* current_process; // process en train de s'executer
     int process_id; // l'pid du current process
 
+
     //function
-    EXECUTION_RESULT* (*execute_instruction) (INSTRUCTION* instruction);
+    EXECUTION_RESULT* (*execute_instruction) (INSTRUCTION* instruction, float quantum);
 
 } EXECUTION_QUEUE;

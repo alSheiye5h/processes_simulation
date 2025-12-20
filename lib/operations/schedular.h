@@ -121,7 +121,7 @@ PCB* op_ask_for_next_ready_element(PCB* current_pcb) {
 }
 
 // ordonnanceur to execution queue
-EXECUTION_QUEUE_RESPONSE* op_execute_instruction(INSTRUCTION* instruction) {
+EXECUTION_RESULT* op_execute_instruction(INSTRUCTION* instruction) {
 
 } 
 
