@@ -62,6 +62,8 @@ bool op_sched_check_instruction_disponibility(INSTRUCTION* instruction) {
 }
 
 bool op_simul_check_instruction_disponibility(RESSOURCE_MANAGER* ressource_manager, RESSOURCE ressource) {
+    
     bool result = ressource_manager->check_if_ressource_available(ressource);
+    return result;
 
 }

@@ -110,8 +110,8 @@ bool op_check_if_ressource_available(RESSOURCE_ELEMENT* ressources_head, RESSOUR
     RESSOURCE_ELEMENT* head = ressources_head;
 
     while (head != NULL) {
-        if (head->ressource == ressource) { // when found
-            return head->disponibilite;
+        if (head->ressource == ressource || head->disponibilite == true) { // when found
+            return true;
         }
         head = head->next_ressource;
     }

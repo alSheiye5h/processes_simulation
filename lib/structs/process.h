@@ -22,7 +22,6 @@ typedef struct INSTRUCTION{
     int instruct_id; // the id of instruction because process can stop at it if need ressources, pointer because it can be too long
     PCB* process; // the id of the process owner
 
-    float time_remaining; // in ms
     RESSOURCE type; // type of instruction which is ressource needed
     INSTRUCTION_STATE state; // state of instruction 
     struct INSTRUCTION* next;

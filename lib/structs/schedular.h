@@ -27,7 +27,7 @@ typedef struct {
     
 } ORDONNANCEUR_STATISTICS;
 
-typedef struct {
+typedef struct ORDONNANCEUR {
 
     Algorithms algorithm;
     PCB* exec_proc; // processus en train de s'executer
@@ -44,6 +44,7 @@ typedef struct {
     EXECUTION_QUEUE* in_execution_queue; // pointeur vers queue d'execution
 
     ORDONNANCEUR_STATISTICS* statistics; // pointeur vers les statistics du schedular
+    INSTRUCTION* current_instruction; // need to be init as head
 
     // functions
     // on start
@@ -59,6 +60,7 @@ typedef struct {
     bool (*ask_sort_rt)(); // ask simulator to tell process manager to sort by remaining time ; pour srtf
     bool (*ask_sort_priority)(); // ask simulator to tell process manager to sort by priority ; pour ppp
     PCB* (*ask_for_next_ready_element)(PCB* current_pcb);
+
 
     // update statistics
     bool (*update_schedular_statistics) (ORDONNANCEUR_STATISTICS* schedular, float cpu_total_temps_usage, float cpu_temps_unoccupied, int context_switch, float total_temps_attente, float process_termine_count, float throughtput); // must check nullty
