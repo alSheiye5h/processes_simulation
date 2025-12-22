@@ -7,13 +7,37 @@
 #include "structs/schedular.h"
 #include "structs/ressource.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
 
 
 
 // requiring functions
-void op_start(SIMULATOR* self, char* path) {
+SIMULATOR* op_start(SIMULATOR* self, char* path) {
     
+    PROCESS_MANAGER* process_manager = (PROCESS_MANAGER*)malloc(sizeof(PROCESS_MANAGER));
+    
+    RESSOURCE_MANAGER* ressource_manager = (RESSOURCE_MANAGER*)malloc(sizeof(RESSOURCE_MANAGER));
 
+    ORDONNANCEUR* schedular = (ORDONNANCEUR*)malloc(sizeof(ORDONNANCEUR));
+
+    if (process_manager == NULL || ressource_manager == NULL || schedular == NULL) {
+        fprintf(stderr, "ERROR ON: op_start , allocation returned NULL\n");
+        exit(1);
+    }
+
+    self->process_manager = process_manager;
+    self->ressource_manager = ressource_manager;
+    self->schedular = schedular;
+
+    self->simulator = self;
+
+    self->runing = true;
+
+    return self;
 }
 
 void op_stop(SIMULATOR* self, char* path) {
@@ -58,7 +82,7 @@ RESSOURCE_MANAGER* op_start_ressource_manager(SIMULATOR* self) {
 }
 
 ORDONNANCEUR* op_start_schedular(Algorithms algorithm, int quantum, SIMULATOR* self) {
-    
+
     ORDONNANCEUR* schedular = (ORDONNANCEUR*)malloc(sizeof(ORDONNANCEUR));
 
     if (schedular == NULL) {
@@ -73,7 +97,8 @@ ORDONNANCEUR* op_start_schedular(Algorithms algorithm, int quantum, SIMULATOR* s
 
 
 // process_manager & schedular related function
-bool op_check_ressource_disponibility(SIMULATOR* self, RESSOURCE_ELEMENT* ressource_needed) {
+bool op_check_ressource_disponibility(SIMULATOR* self, RESSOURCE ressource_needed) {
+
     bool response = self->ressource_manager->check_if_ressource_available(ressource_needed);
 
     return response;
@@ -108,7 +133,7 @@ bool op_signal_ressource_free(RESSOURCE_MANAGER* ressource_manager, RESSOURCE re
 }
 
 PCB* op_ask_for_next_ready_element(SIMULATOR* simulator, PCB* process) {
-    bool response = simulator->process_manager->get_next_ready_element(process);
+    PCB* response = simulator->process_manager->get_next_ready_element(process);
 
     return response;
 }

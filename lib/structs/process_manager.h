@@ -25,10 +25,10 @@ typedef struct PROCESS_MANAGER {
 
     // process table related  (when creating the pcb pcd_statistics should also be created)
     PCB* (*get_all_processus)(FILE* buffer); // should count while retrieving return struct that has first PCB* and size we'll get all process append them to a listn then assign pid,after that we ll push them into process list  *maybe*[ should check the ressources of each process compare to enumeration,]
-    struct PCB* (*sort_by_fc)(struct PCB* ready_queue_head, bool circular); // process_list created by get_all_processus
-    struct PCB* (*sort_by_rt)(struct PCB* ready_queue_head); // process_list by get_all_processus
-    struct PCB* (*sort_by_priority)(struct PCB* ready_queue_head);  // same
-    struct PCB* (*sort_by_burst)(struct PCB* ready_queue_head); // same
+    struct PCB* (*sort_by_fc)(PROCESS_MANAGER* self, bool circular); // process_list created by get_all_processus
+    struct PCB* (*sort_by_rt)(PROCESS_MANAGER* self); // process_list by get_all_processus
+    struct PCB* (*sort_by_priority)(PROCESS_MANAGER* self); // process_list by get_all_processus // same
+    struct PCB* (*sort_by_burst)(PROCESS_MANAGER* self); // same
     struct PCB* (*push_all_to_process_table)(struct PCB* process_table_head, PCB* pcbs_head);  // list got by the sorting function
 
     //pcb related
@@ -38,6 +38,7 @@ typedef struct PROCESS_MANAGER {
     struct PCB* (*push_to_ready_queue)(struct PCB* ready_queue_head, struct PCB* pcb); // LIST CREATED NEED TO BEE FREE AFRTER ASSIGNING IT TO the proces_manager ready queue
     struct PCB* (*delete_from_ready_queue)(struct PCB* ready_queue_head, PCB* pcb); // the chaine node should be freed
     struct PCB* (*move_process_to_ready)(struct PCB* ready_queue_head, PCB* pcb);
+    struct PCB* (*get_next_ready_element) (PCB* current_pcb);
 
     // bloqued queue related
     struct PCB* (*add_process_to_blocked_queue)(struct PCB* blocked_queue_head, PCB* pcb); // should covert pcb to BLOCKED_QUEUE_ELEMENT then push it
@@ -47,7 +48,6 @@ typedef struct PROCESS_MANAGER {
     // assign function to the pcb
     PCB* (*assign_functions_to_pcb)(PCB* pcb);
 
-    PCB* (*get_next_ready_element) (PCB* current_pcb);
 
     
 } PROCESS_MANAGER;
