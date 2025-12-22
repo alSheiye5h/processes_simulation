@@ -77,6 +77,9 @@ typedef struct ORDONNANCEUR {
     // execute process
     process_return (*execute_process)(ORDONNANCEUR* self, PCB* process);
 
+    OPTIONS (*work)(ORDONNANCEUR* self, OPTIONS options);
+
+
 } ORDONNANCEUR;
 
 // like n9dr n3ti l ordonnanceur process i3tih l execution_queue

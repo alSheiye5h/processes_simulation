@@ -49,5 +49,7 @@ typedef struct PROCESS_MANAGER {
     
     // assign function to the pcb
     PCB* (*assign_functions_to_pcb)(PCB* pcb);
+
+    PROCESS_MANAGER* (*work)(PROCESS_MANAGER* self);
     
 } PROCESS_MANAGER;

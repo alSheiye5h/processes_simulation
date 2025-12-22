@@ -65,6 +65,13 @@ typedef struct {
 
 } ORDONNANCEUR;
 
+
+typedef struct OPTIONS {
+    int algorithm;
+    float quantum;
+} OPTIONS;
+
+
 typedef struct {
     ORDONNANCEUR* schedular; // pointeur vers lordonnanceur
     PROCESS_MANAGER* process_manager; // pointeur to process manaer
@@ -109,5 +116,8 @@ typedef struct {
 
     WORK_RETURN (*work) (PROCESS_MANAGER* process_manager, ORDONNANCEUR* schedular, SIMULATOR* simulator, EXECUTION_QUEUE execution_queue);
 
+    PROCESS_MANAGER* (*create_process_manager)(void);
+    RESSOURCE_MANAGER* (*create_ressource_manager)(void);
+    ORDONNANCEUR* (*create_schedular)(Algorithms algorithm, int quantum);
 
 } SIMULATOR;

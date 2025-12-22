@@ -4,8 +4,9 @@
 #include "structs/simulator.h"
 #include "structs/process_manager.h"
 #include "structs/ressource_manager.h"
-#include "structs/schedular.h"
 #include "structs/ressource.h"
+#include "structs/schedular.h"
+#include "operations/helpers/simulator.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,11 +153,26 @@ bool op_ask_sort_priority(SIMULATOR* simulator) {
     return response;
 }
 
-WORK_RETURN op_work(SIMULATOR* self, PROCESS_MANAGER* process_manager, ORDONNANCEUR* schedular, RESSOURCE_MANAGER* ressource_manager, FILE* buffer) {
+WORK_RETURN op_work(SIMULATOR* self, ORDONNANCEUR* schedular, RESSOURCE_MANAGER* ressource_manager, FILE* buffer) {
     
-    int algorithm = ask_for_algorithm();
+    OPTIONS options = ask_for_options();
 
-    
+    PROCESS_MANAGER* process_manager_local = self->create_process_manager(); // create process manager
+
+    self->process_manager = process_manager_local; // asign it to the simulator
+
+    self->process_manager->work(self->process_manager);
+
+    // -----------------------
+
+    ORDONNANCEUR* schedular = self->create_schedular(options.algorithm, options.quantum); // create schedular
+
+    self->schedular = schedular; // asign it to the simulator
+
+    OPTIONS returned = self->schedular->work(self->schedular);
+
+
+
 
 
 
