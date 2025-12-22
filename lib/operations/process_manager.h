@@ -479,7 +479,22 @@ PCB* op_get_next_ready_element(PCB* current_pcb) {
     return next;
 }
 
+PROCESS_MANAGER* op_work(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
 
+    self->processus_buffer = buffer;
+
+    PCB* process_table_head = self->create_process_table(self->processus_buffer); // return the first element in process table
+
+    PCB* ready_queue_head = self->create_ready_queue(process_table_head, (algorithm == 0 ? true : false)); // if it's rr then circular
+
+    PCB* blocked_queue_head = self->create_blocked_queue();
+
+    self->process_table_head = process_table_head;
+    self->ready_queue_head = ready_queue_head;
+    self->blocked_queue_head = blocked_queue_head;
+
+    return self;
+}
 
 PCB* op_assign_functions_to_pcb(PCB* pcb) {
     pcb->update_temps_attente = op_update_temps_attente;

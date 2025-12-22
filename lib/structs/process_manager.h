@@ -10,6 +10,7 @@
 
 
 typedef struct PROCESS_MANAGER {
+
     struct PCB* process_table_head; // pointeur vers process table
     int process_count; // n processes
     struct PCB* ready_queue_head; // pointer to ready chaine can be circular for RR
@@ -20,6 +21,7 @@ typedef struct PROCESS_MANAGER {
     // functions
     // on start
     struct PCB* (*create_process_table)(FILE* buffer); // need to be assigned to process_table field and update the process_count field// create a chaine circulaire ou non circular
+    struct PCB* (*create_ready_queue)(PCB* process_table_head, bool circular); // size which is process count field)
     // READY_QUEUE_ELEMENT* (*create_ready_queue, PCB* pcb_head)(bool circular); // size which is process count field
     struct PCB* (*create_blocked_queue)(void); // will initialize by size 0 i think
 
@@ -47,7 +49,5 @@ typedef struct PROCESS_MANAGER {
     
     // assign function to the pcb
     PCB* (*assign_functions_to_pcb)(PCB* pcb);
-
-
     
 } PROCESS_MANAGER;

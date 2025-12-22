@@ -152,6 +152,17 @@ bool op_ask_sort_priority(SIMULATOR* simulator) {
     return response;
 }
 
-WORK_RETURN op_work(PROCESS_MANAGER* process_manager, ORDONNANCEUR* schedular, SIMULATOR* simulator, EXECUTION_QUEUE execution_queue) {
+WORK_RETURN op_work(SIMULATOR* self, PROCESS_MANAGER* process_manager, ORDONNANCEUR* schedular, RESSOURCE_MANAGER* ressource_manager, FILE* buffer) {
+    
+    int algorithm = ask_for_algorithm();
+
+    
+
+
+
+
+
+
+
 
 }
