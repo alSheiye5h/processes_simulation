@@ -25,14 +25,13 @@ typedef enum {
 typedef struct ORDONNANCEUR_STATISTICS {
 
     float cpu_total_temps_usage; // somme temps cpu occup total de tout process
-    float cpu_temps_unoccuped; // temps total ou cpu n etait pas utilisé
     int context_switch; // nombre total de changement de processus
-    float total_temps_attente; // somme temps waiting de tout processus
 
     // when process is terminated
     float total_turnround; // somme de tout processus (temps termine - temps arrive)
     int processus_termine_count; // processus terminé
     float troughtput; // processus terminé / total temps en ms
+    float total_temps_attente; // somme temps waiting de tout processus
     
 } ORDONNANCEUR_STATISTICS;
 
@@ -67,19 +66,22 @@ typedef struct ORDONNANCEUR {
     bool (*need_ressources)(RESSOURCE_ELEMENT* ressource_needed); // return 1 if ressource is available marked unavailable
     bool (*ressource_is_free)(SIMULATOR* simulator, RESSOURCE ressource); // return 1 if ressource succesfully free (for error handling)
     bool (*update_cpu_time_used)(PCB* process, float inc); // shoudld declancher calcul remaining time inc the value to add to time, because can only increasing not decreasing
-    bool (*update_process)(PCB* process, float temps_fin, float tournround, float temps_attente); // when updating temps fin mark process terminated
     bool (*ask_sort_rt)(SIMULATOR* simulator); // ask simulator to tell process manager to sort by remaining time ; pour srtf
     bool (*ask_sort_priority)(SIMULATOR* simulator); // ask simulator to tell process manager to sort by priority ; pour ppp
-    PCB* (*sched_ask_for_next_ready_element)(struct ORDONNANCEUR* self, PCB* current_pcb);
+    PCB* (*sched_ask_for_next_ready_element)(ORDONNANCEUR* self,PCB* current_pcb);
 
     // update statistics
-    bool (*update_schedular_statistics) (ORDONNANCEUR_STATISTICS* schedular, float cpu_total_temps_usage, float cpu_temps_unoccupied, int context_switch, float total_temps_attente, float process_termine_count, float throughtput); // must check nullty
+    bool (*update_schedular_statistics) (ORDONNANCEUR* self, float* exec_time, float* burst, float* temp_attente, bool finished); // must check nullty
 
     // check instruction disponibility
     bool (*check_ressource_disponibility) (RESSOURCE ressource);
 
     // execute process
     process_return (*execute_process)(ORDONNANCEUR* self, PCB* process);
+
+    WORK_RETURN (*select)(); // will be pointing on one of 5 functions depens on the algorithm
+
+    process_update (*update_process)(ORDONNANCEUR* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
 
 } ORDONNANCEUR;
 

@@ -10,6 +10,7 @@
 #include "../../lib/structs/schedular.h"
 #include "../../lib/structs/ressource.h"
 #include "../../lib/structs/process.h"
+#include "../../lib/structs/process_manager.h"
 #include "../../lib/structs/simulator.h"
 
 ORDONNANCEUR_STATISTICS* op_create_statistics() {   
@@ -45,25 +46,10 @@ bool op_update_cpu_time_used(ORDONNANCEUR* self, float inc) {
     return response;
 }
 
-bool op_update_process(SIMULATOR* simulator,PCB* process, float *temps_fin, float *tournround, float *temps_attente) {
-    if (process == NULL) {
-        fprintf(stderr, "ERROR ON: op_update_process , process is NULL\n");
-        return false;
-    }
-
-    if (temps_fin) { // updating temp fin = update tournround
-
-    }    
-
-    if (tournround) {
-        process->statistics->tournround = *tournround;
-    }
-
-    if (temps_attente) {
-        process->statistics->temps_attente = *temps_attente;
-    }
-
-    return true;
+bool op_update_process(ORDONNANCEUR* self,PCB* process, float *temps_fin, float *tournround) {
+    
+    return self->simulator->update_process(self->simulator, process, temps_fin, tournround);
+    
 }
 
 bool op_ask_sort_rt(ORDONNANCEUR* schedular) {
@@ -112,29 +98,7 @@ EXECUT_RESPONSE op_signal_execute_instruction(ORDONNANCEUR* self, EXECUTION_QUEU
     return response;
 }
 
-// update statistics
-bool op_update_schedular_statistics(ORDONNANCEUR* schedular, float* cpu_total_temps_usage, float* cpu_temps_unoccupied, int* context_switch, float* total_temps_attente, float* process_termine_count, float* throughtput) { // must check nullty
-    
-    if (cpu_total_temps_usage != NULL)
-        schedular->statistics->cpu_total_temps_usage = *cpu_total_temps_usage;
-    
-    if (cpu_temps_unoccupied != NULL)
-        schedular->statistics->cpu_temps_unoccuped = *cpu_temps_unoccupied;
-    
-    if (context_switch != NULL)
-        schedular->statistics->context_switch = *context_switch;
 
-    if (total_temps_attente != NULL)
-        schedular->statistics->total_temps_attente = *total_temps_attente;
-    
-    if (total_temps_attente != NULL)
-        schedular->statistics->processus_termine_count = *process_termine_count;
-    
-    if (throughtput != NULL)
-        schedular->statistics->troughtput = *throughtput;
-
-    return true;
-}
 
 bool op_check_ressource_disponibility(SIMULATOR* simulator, RESSOURCE ressource) {
 
@@ -214,28 +178,82 @@ WORK_RETURN execute_rr(float quantum) {
     return WORK_DONE;
 }
 
+// update statistics
+bool op_update_schedular_statistics(ORDONNANCEUR* self, float* exec_time, float* burst, float* temp_attente, bool finished) { // must check nullty
+
+    if (finished == true) {
+        
+            self->statistics->processus_termine_count++;
+            self->statistics->cpu_total_temps_usage += *exec_time;
+            self->statistics->total_turnround += *burst;
+            self->statistics->troughtput = (float)self->statistics->processus_termine_count / self->statistics->total_turnround;
+            self->statistics->total_temps_attente += self->exec_proc->statistics->temps_attente;
+
+    } else {
+
+            self->statistics->context_switch++;
+            self->statistics->cpu_total_temps_usage += *exec_time;
+    }
+    
+    return true;
+}
+
 
 WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
-    
 
     do {
     
-        self->exec_proc = self->sched_ask_for_next_ready_element(self->simulator, self->exec_proc); // get the next element
+        self->exec_proc = self->sched_ask_for_next_ready_element(self, self->exec_proc); // get the next element
 
         if (execute_rr((self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum) != WORK_DONE) { // if remaining time is less than the quantum then execute for remaining time not quantum else execute for quantum
             return ERROR;
         }
 
+        time_t daba;
+
+        time_t* temps_fin_ptr = NULL;
 
 
+        if (self->exec_proc->remaining_time < quantum) {
 
-    
+            float n_quantum = self->exec_proc->remaining_time;
+            
+            time(&daba);
+            temps_fin_ptr = &daba;
+
+            process_update update = self->update_process(self, self->exec_proc, temps_fin_ptr, &quantum);
+            
+            if (update != UPDATED) {
+                return ERROR;
+            }
+
+            if (
+                self->update_schedular_statistics(self, &n_quantum, &self->exec_proc->burst_time, &self->exec_proc->statistics->temps_attente, true) != true // changed not good
+            ) {
+                return ERROR;
+            }
+
+            
+        } else {
+
+            process_update update = self->update_process(self, self->exec_proc, temps_fin_ptr, &quantum);
+
+            if (update != UPDATED) {
+                return ERROR;
+            }
+
+            if (
+                self->update_schedular_statistics(self, &quantum, NULL, NULL, false) != true // changed not good
+            ) {
+                return ERROR;
+            }
+
+        }
+
     } while (self->exec_proc != NULL);
 
     printf("all processes are terminated\n");
 
 
-
-
-
+    return WORK_DONE;
 }

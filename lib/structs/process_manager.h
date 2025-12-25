@@ -6,6 +6,9 @@
 #include "structs/process.h" // for PCB struct
 #include "structs/ressource.h" // for RESSOURCE_ELEMENT
 
+typedef enum {
+    UPDATED, ERROR
+} process_update;
 
 
 
@@ -34,7 +37,7 @@ typedef struct PROCESS_MANAGER {
     struct PCB* (*push_all_to_process_table)(struct PCB* process_table_head, PCB* pcbs_head);  // list got by the sorting function
 
     //pcb related
-    PCB* (*update_process)(PCB* pcb, time_t *temps_fin, float *cpu_temps_used, float *temps_attente, int *cpu_usagee); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
+    process_update (*update_process)(PROCESS_MANAGER* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
 
     //ready queue related
     struct PCB* (*push_to_ready_queue)(struct PCB* ready_queue_head, struct PCB* pcb); // LIST CREATED NEED TO BEE FREE AFRTER ASSIGNING IT TO the proces_manager ready queue

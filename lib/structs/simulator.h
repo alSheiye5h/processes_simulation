@@ -74,5 +74,7 @@ typedef struct SIMULATOR {
 
     WORK_RETURN (*run)(SIMULATOR* self,OPTIONS options); // will be pointing on one of 5 functions depens on the algorithm
 
+    process_update (*update_process)(SIMULATOR* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
+
 
 } SIMULATOR;

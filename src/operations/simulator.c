@@ -166,3 +166,7 @@ WORK_RETURN op_run(SIMULATOR* self, OPTIONS options) {
 
 }
 
+process_update update_process(SIMULATOR* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used) { // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
+
+    return self->process_manager->update_process(self->process_manager, pcb, temps_fin, cpu_temps_used);
+}

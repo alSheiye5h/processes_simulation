@@ -300,7 +300,8 @@ PCB* op_create_blocked_queue(PCB* blocked_queue_head) {
 
 //pcb related
 // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
-PCB* op_update_process(PCB* pcb, time_t *temps_fin, float *cpu_temps_used, float *temps_attente, int *cpu_usage) {
+PCB* op_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float *cpu_temps_used) {
+
     if (pcb == NULL) {
         fprintf(stderr, "ERROR ON: op_update_process , pcb is NULL\n");
         return NULL;
@@ -310,19 +311,18 @@ PCB* op_update_process(PCB* pcb, time_t *temps_fin, float *cpu_temps_used, float
     if (temps_fin) { // updating temp fin = update tournround
         pcb->statistics->temps_fin = *temps_fin;
         pcb->statistics->tournround = *temps_fin - pcb->statistics->temps_arrive;
+        pcb->statistics->temps_attente = pcb->statistics->tournround - pcb->burst_time;
+        pcb->etat = TERMINATED;
+
+        self->delete_from_ready_queue(self->ready_queue_head, pcb); // delete the process from ready queue when terminated
+        
     }
     
     if (cpu_temps_used) {
         pcb->cpu_time_used += *cpu_temps_used; // because initialized to 0
     }
     
-    if (temps_attente) {
-        pcb->statistics->temps_attente += *temps_attente; // because init to 0
-    }
     
-    // if (cpu_usage) {
-    //     pcb->cpu_usage += cpu_usage; // because also init to 0
-    // }
 
     return pcb;
 }
