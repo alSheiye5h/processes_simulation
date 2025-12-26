@@ -158,10 +158,8 @@ WORK_RETURN op_init(SIMULATOR* self, ORDONNANCEUR* schedular, RESSOURCE_MANAGER*
 WORK_RETURN op_run(SIMULATOR* self, OPTIONS options) {
 
     switch (options.algorithm) {
-        // assign schedular->select depoend on the algorithm
+        
     }
-
-
 
 
 }

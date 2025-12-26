@@ -309,13 +309,14 @@ PCB* op_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float
 
     // updating the given fields
     if (temps_fin) { // updating temp fin = update tournround
+        
         pcb->statistics->temps_fin = *temps_fin;
         pcb->statistics->tournround = *temps_fin - pcb->statistics->temps_arrive;
         pcb->statistics->temps_attente = pcb->statistics->tournround - pcb->burst_time;
         pcb->etat = TERMINATED;
 
         self->delete_from_ready_queue(self->ready_queue_head, pcb); // delete the process from ready queue when terminated
-        
+
     }
     
     if (cpu_temps_used) {

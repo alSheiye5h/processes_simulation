@@ -30,4 +30,6 @@ typedef struct EXECUTION_QUEUE {
     bool (*check_ressource_disponibility) (RESSOURCE ressource); // check if instruction is disponible
     bool (*mark_ressource_unavailable) (RESSOURCE ressource); // mark ressource indisponible
 
+    WORK_RETURN (*execute_rr)(float quantum); // execute for round robin
+
 } EXECUTION_QUEUE;

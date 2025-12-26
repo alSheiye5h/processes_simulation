@@ -73,32 +73,6 @@ PCB* op_sched_ask_for_next_ready_element(ORDONNANCEUR* self, PCB* current_pcb) {
     return response;
 }
 
-// ordonnanceur to execution queue
-EXECUT_RESPONSE op_signal_execute_instruction(ORDONNANCEUR* self, EXECUTION_QUEUE* execution_queue, INSTRUCTION* instruction) {
-    
-    bool disponibility = self->check_ressource_disponibility(instruction->type);
-
-    EXECUT_RESPONSE response;
-    
-    if (disponibility == true) {
-        
-        execution_queue->execute_instruction(instruction); // if it's disponible then exeute it
-        instruction->state = COMPLETED; // mark instruction completed
-        response = EXEC_SUCCESS; // if disponible return success
-        
-    } else if (disponibility == false) {
-
-        response = NEED_RESSOURCE; // if not disponible return need ressource
-    
-    } else {
-
-        response = EXEC_ERROR; // if error return error
-    }
-
-    return response;
-}
-
-
 
 bool op_check_ressource_disponibility(SIMULATOR* simulator, RESSOURCE ressource) {
 
@@ -107,55 +81,7 @@ bool op_check_ressource_disponibility(SIMULATOR* simulator, RESSOURCE ressource)
     return result;
 }
 
-process_return op_execute_process(ORDONNANCEUR* self, PCB* process) {
 
-    self->exec_proc = process; // define the process en cours d'execution
-
-    process->etat = EXECUTION; // change the state
-
-    if ( process->current_instruction == NULL) // if it's the first time executing the process ------ need to be init as 0
-        process->current_instruction = process->instructions_head; // define the current instruction
-
-    if (process->etat == READY)
-        process->current_instruction = process->instructions_head;
-
-    process_return response;
-
-    while (process->current_instruction != NULL) {
-
-        EXECUT_RESPONSE exec_instruction = self->signal_execute_instruction(self, self->execution_queue, process->current_instruction); // can be changed to take 5ms
-        
-        if (exec_instruction == EXEC_SUCCESS) { // if instruction succedded
-
-            if (process->current_instruction->next == NULL) {
-
-                process->etat = TERMINATED;
-
-                response = FINISHED;
-
-                break;
-            }
-
-            process->current_instruction = process->current_instruction->next;
-
-        } else if (exec_instruction == NEED_RESSOURCE) { // if it need's ressources
-
-            process->etat = BLOCKED;
-
-            response = RESSOURCE_NEEDED;
-
-            break;
-
-        } else {
-
-            response = ERROR;
-
-            break;
-        }
-    }
-
-    return response;
-}
 
 ORDONNANCEUR* op_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS options) {
 
@@ -173,10 +99,7 @@ ORDONNANCEUR* op_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS options)
 }
 
 
-WORK_RETURN execute_rr(float quantum) {
-    sleep(quantum);
-    return WORK_DONE;
-}
+
 
 // update statistics
 bool op_update_schedular_statistics(ORDONNANCEUR* self, float* exec_time, float* burst, float* temp_attente, bool finished) { // must check nullty
@@ -205,7 +128,7 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
     
         self->exec_proc = self->sched_ask_for_next_ready_element(self, self->exec_proc); // get the next element
 
-        if (execute_rr((self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum) != WORK_DONE) { // if remaining time is less than the quantum then execute for remaining time not quantum else execute for quantum
+        if (self->execution_queue->execute_rr((self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum) != WORK_DONE) { // if remaining time is less than the quantum then execute for remaining time not quantum else execute for quantum
             return ERROR;
         }
 
