@@ -62,10 +62,10 @@ typedef struct ORDONNANCEUR {
     ORDONNANCEUR_STATISTICS* (*create_statistics)(void);
 
     // ordonnanceur to simulator (using bool for simplicity)
-    EXECUT_RESPONSE (*signal_execute_instruction) (ORDONNANCEUR* self, EXECUTION_QUEUE* execution_queue, INSTRUCTION* instruction); // tell the execution queue to execute an instruction
+    // EXECUT_RESPONSE (*signal_execute_instruction) (ORDONNANCEUR* self, EXECUTION_QUEUE* execution_queue, INSTRUCTION* instruction); // tell the execution queue to execute an instruction
     bool (*need_ressources)(RESSOURCE_ELEMENT* ressource_needed); // return 1 if ressource is available marked unavailable
     bool (*ressource_is_free)(SIMULATOR* simulator, RESSOURCE ressource); // return 1 if ressource succesfully free (for error handling)
-    bool (*update_cpu_time_used)(PCB* process, float inc); // shoudld declancher calcul remaining time inc the value to add to time, because can only increasing not decreasing
+    // bool (*update_cpu_time_used)(PCB* process, float inc); // shoudld declancher calcul remaining time inc the value to add to time, because can only increasing not decreasing
     bool (*ask_sort_rt)(SIMULATOR* simulator); // ask simulator to tell process manager to sort by remaining time ; pour srtf
     bool (*ask_sort_priority)(SIMULATOR* simulator); // ask simulator to tell process manager to sort by priority ; pour ppp
     PCB* (*sched_ask_for_next_ready_element)(ORDONNANCEUR* self,PCB* current_pcb);
@@ -75,13 +75,13 @@ typedef struct ORDONNANCEUR {
 
     // check instruction disponibility
     bool (*check_ressource_disponibility) (RESSOURCE ressource);
-
-    // execute process
-    process_return (*execute_process)(ORDONNANCEUR* self, PCB* process);
-
-    WORK_RETURN (*select)(); // will be pointing on one of 5 functions depens on the algorithm
-
+    
+    
     process_update (*update_process)(ORDONNANCEUR* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
+
+    // execute process    
+    
+    WORK_RETURN (*select)(); // will be pointing on one of 5 functions depens on the algorithm
 
 } ORDONNANCEUR;
 

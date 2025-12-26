@@ -7,6 +7,8 @@
 #include "../../lib/structs/ressource.h"
 #include "../../lib/structs/schedular.h"
 
+#include "../../src/operations/schedular.c"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -149,8 +151,11 @@ WORK_RETURN op_init(SIMULATOR* self, ORDONNANCEUR* schedular, RESSOURCE_MANAGER*
     // ---------- schedular
  
     self->schedular = self->create_schedular(options.algorithm, options.quantum); // create schedular
+    
+    self->schedular->init = op_sched_init; // assign the initialization function to schedular
 
-    self->schedular->init(self->schedular, self, options);
+    self->schedular->init(self->schedular, self, options); // then init it
+
 
     return WORK_DONE;
 }
@@ -158,7 +163,8 @@ WORK_RETURN op_init(SIMULATOR* self, ORDONNANCEUR* schedular, RESSOURCE_MANAGER*
 WORK_RETURN op_run(SIMULATOR* self, OPTIONS options) {
 
     switch (options.algorithm) {
-        
+        case 0:
+
     }
 
 

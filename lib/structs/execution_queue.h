@@ -24,6 +24,8 @@ typedef struct EXECUTION_QUEUE {
 
     ORDONNANCEUR* schedular;
 
+    bool (*init)(struct EXECUTION_QUEUE* self);
+
     //function
     INSTRUCTION* (*next_instruction) (PCB* pcb); // retrieve the next instruction to pass it to execute instruction
     EXECUT_RESPONSE* (*execute_instruction) (INSTRUCTION* instruction); // execute it and return the result

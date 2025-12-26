@@ -13,6 +13,8 @@
 #include "../../lib/structs/process_manager.h"
 #include "../../lib/structs/simulator.h"
 
+#include "../../src/operations/execution_queue.c"
+
 ORDONNANCEUR_STATISTICS* op_create_statistics() {   
 
     ORDONNANCEUR_STATISTICS* statistics = (ORDONNANCEUR_STATISTICS*)malloc(sizeof(ORDONNANCEUR_STATISTICS)); // init the statistics
@@ -24,6 +26,18 @@ ORDONNANCEUR_STATISTICS* op_create_statistics() {
 
     return statistics;
 }
+
+EXECUTION_QUEUE* op_create_execution_queue() {
+    EXECUTION_QUEUE* execution_queue = (EXECUTION_QUEUE*)malloc(sizeof(EXECUTION_QUEUE));
+
+    if (execution_queue == NULL) {
+        fprintf(stderr, "ERROR ON: op_create_execution_queue: Failed to allocate memory for execution_queue\n");
+        exit(1);
+    }
+
+    return execution_queue;
+}
+
 
 // ordonnanceur to simulator
 bool op_need_ressources(ORDONNANCEUR* self, RESSOURCE_ELEMENT* ressource_needed) {
@@ -80,25 +94,6 @@ bool op_check_ressource_disponibility(SIMULATOR* simulator, RESSOURCE ressource)
 
     return result;
 }
-
-
-
-ORDONNANCEUR* op_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS options) {
-
-    self->simulator = simulator;
-
-    self->algorithm = options.algorithm;
-
-    self->quantum = options.quantum;
-
-    self->statistics = self->create_statistics(); // create statistics and assign it
-
-    self->execution_queue = self->create_execution_queue(); // create execution queue and assign it
-
-    return self;
-}
-
-
 
 
 // update statistics
@@ -179,4 +174,43 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 
 
     return WORK_DONE;
+}
+
+ORDONNANCEUR* op_sched_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS options) {
+
+    // function assigning
+    self->create_execution_queue = op_create_execution_queue;
+    self->create_statistics = op_create_statistics;
+    self->need_ressources = op_need_ressources;
+    self->ressource_is_free = op_ressource_is_free;
+    self->ask_sort_priority = op_ask_sort_priority;
+    self->ask_sort_rt = op_ask_sort_rt;
+    self->sched_ask_for_next_ready_element = op_sched_ask_for_next_ready_element;
+    self->update_schedular_statistics = op_update_schedular_statistics;
+    self->check_ressource_disponibility = op_check_ressource_disponibility;
+    self->update_process = op_update_process;
+
+
+    self->simulator = simulator;
+
+    self->algorithm = options.algorithm;
+
+    self->quantum = options.quantum;
+
+    self->statistics = self->create_statistics(); // create statistics and assign it 
+
+    self->statistics->cpu_total_temps_usage = 0;
+    self->statistics->context_switch = 0;
+    self->statistics->processus_termine_count = 0;
+    self->statistics->total_turnround = 0;
+    self->statistics->troughtput = 0;
+    self->statistics->total_temps_attente = 0;
+
+    self->execution_queue = self->create_execution_queue(); // create execution queue and assign it
+
+    self->execution_queue->init = ex_init;
+
+    self->execution_queue->init(self->execution_queue);
+
+    return self;
 }

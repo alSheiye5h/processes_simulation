@@ -9,3 +9,13 @@ WORK_RETURN execute_rr(float quantum) {
     sleep(quantum);
     return WORK_DONE;
 }
+
+
+
+
+bool ex_init(EXECUTION_QUEUE* self) {
+
+    self->execute_rr = execute_rr;
+
+    return true;
+}
