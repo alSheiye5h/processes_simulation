@@ -22,8 +22,8 @@ typedef struct EXECUTION_QUEUE {
     int id; // l id du composant en train d'executer
     char name[10]; // name du composant qui execute
 
-    INSTRUCTION* current_instruction; // l instruction en train de s'executer
-    PCB* current_process; // process en train de s'executer
+    struct INSTRUCTION* current_instruction; // l instruction en train de s'executer
+    struct PCB* current_process; // process en train de s'executer
     int process_id; // l'pid du current process
     float quantum;
 
@@ -32,8 +32,8 @@ typedef struct EXECUTION_QUEUE {
     bool (*init)(struct EXECUTION_QUEUE* self);
 
     //function
-    INSTRUCTION* (*next_instruction) (PCB* pcb); // retrieve the next instruction to pass it to execute instruction
-    EXECUT_RESPONSE* (*execute_instruction) (INSTRUCTION* instruction); // execute it and return the result
+    struct INSTRUCTION* (*next_instruction) (struct PCB* pcb); // retrieve the next instruction to pass it to execute instruction
+    EXECUT_RESPONSE* (*execute_instruction) (struct INSTRUCTION* instruction); // execute it and return the result
     bool (*check_ressource_disponibility) (RESSOURCE ressource); // check if instruction is disponible
     bool (*mark_ressource_unavailable) (RESSOURCE ressource); // mark ressource indisponible
 

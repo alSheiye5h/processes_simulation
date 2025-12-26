@@ -11,8 +11,6 @@ typedef enum {
     UPDATED, ERROR
 } process_update;
 
-
-
 typedef struct PROCESS_MANAGER {
 
     struct PCB* process_table_head; // pointeur vers process table

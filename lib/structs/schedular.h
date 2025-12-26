@@ -46,7 +46,7 @@ typedef struct ORDONNANCEUR_STATISTICS {
 typedef struct ORDONNANCEUR {
 
     Algorithms algorithm;
-    PCB* exec_proc; // processus en train de s'executer
+    struct PCB* exec_proc; // processus en train de s'executer
     int current_pid; // pid du processus en cours d'exec
 
     float quantum; // quantum de time pour RR
@@ -57,16 +57,16 @@ typedef struct ORDONNANCEUR {
     float current_time;
 
     struct SIMULATOR* simulator; // pointeur vers simulator
-    EXECUTION_QUEUE* execution_queue; // pointeur vers queue d'execution
+    struct EXECUTION_QUEUE* execution_queue; // pointeur vers queue d'execution
 
     ORDONNANCEUR_STATISTICS* statistics; // pointeur vers les statistics du schedular
-    INSTRUCTION* current_instruction; // need to be init as head
+    struct INSTRUCTION* current_instruction; // need to be init as head
 
     // functions
     // on start
     OPTIONS (*init)(struct ORDONNANCEUR* self, struct SIMULATOR* simulator, OPTIONS option);
 
-    EXECUTION_QUEUE* (*create_execution_queue)(void);
+    struct EXECUTION_QUEUE* (*create_execution_queue)(void);
     ORDONNANCEUR_STATISTICS* (*create_statistics)(void);
 
     // ordonnanceur to simulator (using bool for simplicity)
@@ -76,7 +76,7 @@ typedef struct ORDONNANCEUR {
     // bool (*update_cpu_time_used)(PCB* process, float inc); // shoudld declancher calcul remaining time inc the value to add to time, because can only increasing not decreasing
     bool (*ask_sort_rt)(struct SIMULATOR* simulator); // ask simulator to tell process manager to sort by remaining time ; pour srtf
     bool (*ask_sort_priority)(struct SIMULATOR* simulator); // ask simulator to tell process manager to sort by priority ; pour ppp
-    PCB* (*sched_ask_for_next_ready_element)(struct ORDONNANCEUR* self,PCB* current_pcb);
+    struct PCB* (*sched_ask_for_next_ready_element)(struct ORDONNANCEUR* self,struct PCB* current_pcb);
 
     // update statistics
     bool (*update_schedular_statistics) (struct ORDONNANCEUR* self, float* exec_time, float* burst, float* temp_attente, bool finished); // must check nullty
