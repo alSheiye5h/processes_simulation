@@ -485,6 +485,11 @@ PCB* op_get_next_ready_element(PCB* current_pcb) {
 
 WORK_RETURN proc_kill(PROCESS_MANAGER* self) {
 
+    if (self->free_process_list(self->process_table_head) != true) {
+        fprintf(stderr, "ERROR ON: proc_kill failed to free the process list");
+        return ERROR;
+    }
+
     free(self);
 
     return WORK_DONE;
@@ -494,7 +499,7 @@ bool op_free_process_list(PCB* process_table_head) {
 
     PCB* next = process_table_head;
 
-    while (next != NULL) {
+    while (next != NULL) { // while the next is not null assign the next to temp then free  it
         PCB* temp = next;
         next = next->pid_sibling_next;
         free(temp);
@@ -526,7 +531,6 @@ bool pro_init(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
     self->delete_from_ready_queue = op_delete_from_ready_queue;
     self->add_process_to_blocked_queue = op_add_process_to_blocked_queue;
     self->free_process_list = op_free_process_list;
-
 
     return true;
 }

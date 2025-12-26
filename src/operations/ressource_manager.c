@@ -112,12 +112,49 @@ bool op_check_if_ressource_available(RESSOURCE_ELEMENT* ressources_head, RESSOUR
     return false;
 }
 
-init_rm op_init(RESSOURCE_MANAGER* self) {
+bool op_free_ressource_list(RESSOURCE_MANAGER* self) {
+
+    RESSOURCE_ELEMENT* next = self->ressources;
+
+    while (next != NULL) {
+
+        RESSOURCE_ELEMENT* temp = next;
+        next = next->next_ressource;
+        free(temp);
+
+    }
+
+    return true;
+}
+
+bool op_rm_kill(RESSOURCE_MANAGER* self) {
+
+    if (self->free_ressource_list(self) == false) {
+        return false;
+    }
+
+    free(self);
+
+    return true;
+}
+
+
+init_rm op_rm_init(RESSOURCE_MANAGER* self) {
+
+    // --------functions assigning
+
+    self->check_if_ressource_available = op_check_if_ressource_available;
+    self->create_ressource_list = op_create_ressource_list;
+    self->look_for_ressource_in_list = op_look_for_ressource_in_list;
+    self->mark_ressource_available = op_mark_ressource_available;
+    self->mark_ressource_unavailable = op_mark_ressource_unavailable;
+    self->free_ressource_list = op_free_ressource_list;
+    self->kill = op_rm_kill;
 
     self->create_ressource_list = self->create_ressource_list(); // create the ressource list then assign it to the ressource head field in ressource manager
 
     if (self->create_ressource_list == NULL) {
-        return ERROR;
+        return INIT_ERROR;
     }
 
     return DONE;

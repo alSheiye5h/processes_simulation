@@ -8,6 +8,7 @@
 #include "../../lib/structs/schedular.h"
 
 #include "../../src/operations/schedular.c"
+#include "../../src/operations/ressource_manager.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -167,6 +168,8 @@ WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
     // ---------- ressource list
 
     self->ressource_manager = self->create_ressource_manager(); // create ressource manager
+
+    self->ressource_manager->init = op_rm_init; // assign the initializer function
 
     self->ressource_manager->init(self->ressource_manager);
 

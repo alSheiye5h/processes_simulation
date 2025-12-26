@@ -22,7 +22,7 @@ typedef struct PROCESS_MANAGER {
     // RESSOURCE* ressources; // in the retrieving should retrieve ressources needed also if a ressource doesn't match the enumeration throw an error (ressource anavailable)
 
     // functions
-    // on start
+    // on startypedef struct PROCESS_MANAGER
     struct PCB* (*create_process_table)(FILE* buffer); // need to be assigned to process_table field and update the process_count field// create a chaine circulaire ou non circular
     struct PCB* (*create_ready_queue)(PCB* process_table_head, bool circular); // size which is process count field)
     // READY_QUEUE_ELEMENT* (*create_ready_queue, PCB* pcb_head)(bool circular); // size which is process count field
