@@ -185,6 +185,12 @@ gcc -Wall -Wextra -std=c11 \
   
 #include "../../lib/structs/simulator.h"
 #include "../../src/implementation/simulator.c"
+#include "../../src/implementation/process_manager.c"
+#include "../../src/implementation/ressource_manager.c"
+#include "../../src/implementation/helpers/process_manager.c"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 void test_runing() {
 
@@ -202,8 +208,30 @@ void test_runing() {
 
     fclose(buffer);
 
-    return 0;
 }
+
+
+// testing the  op_pro_init  : initialization of process manger
+void test_process_manager_initialization() {
+
+
+    FILE* buffer = fopen("data.csv", "r");
+
+    PROCESS_MANAGER* process_manager = (PROCESS_MANAGER*)malloc(sizeof(PROCESS_MANAGER));
+    
+    if (process_manager == NULL) {
+        fprintf(stderr, "ERROR ON: error while allocating the process_manager\n");
+        exit(1);
+    }
+    process_manager->init = op_pro_init; // assign the initializer function
+
+    process_manager->init(process_manager, buffer, 0);
+
+    fclose(buffer);
+
+}
+
+
 
 int main() {
     // testing_process_table_creation_and_ready_queue();
@@ -228,7 +256,10 @@ int main() {
 
     // printf("disponibility : %d\n", op_check_if_ressource_available(ressources_head, CCC));
 
-    test_runing();
+    // test_runing();
+
+    test_process_manager_initialization();
+
 
     return 0;
 }
