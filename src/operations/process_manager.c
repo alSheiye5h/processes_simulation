@@ -5,7 +5,6 @@
 #include "../../lib/structs/process.h"
 #include "../../lib/structs/simulator.h"
 
-#include "../../src/operations/process_manager.c"
 #include "../../src/operations/helpers/process_manager.c"
 
 
@@ -302,11 +301,11 @@ PCB* op_create_blocked_queue(PCB* blocked_queue_head) {
 
 //pcb related
 // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
-PCB* op_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float *cpu_temps_used) {
+process_update op_pro_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float *cpu_temps_used) {
 
     if (pcb == NULL) {
         fprintf(stderr, "ERROR ON: op_update_process , pcb is NULL\n");
-        return NULL;
+        return UPDATE_ERROR;
     }
 
     // updating the given fields
@@ -327,7 +326,7 @@ PCB* op_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float
     
     
 
-    return pcb;
+    return UPDATED;
 }
 
 
@@ -487,7 +486,7 @@ WORK_RETURN proc_kill(PROCESS_MANAGER* self) {
 
     if (self->free_process_table(self->process_table_head) != true) {
         fprintf(stderr, "ERROR ON: proc_kill failed to free the process list");
-        return ERROR;
+        return WORK_ERROR;
     }
 
     free(self);
@@ -509,7 +508,7 @@ bool op_free_process_list(PCB* process_table_head) {
 }
 
 
-bool pro_init(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
+bool op_pro_init(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
 
     self->processus_buffer = buffer;
 
@@ -531,6 +530,7 @@ bool pro_init(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
     self->delete_from_ready_queue = op_delete_from_ready_queue;
     self->add_process_to_blocked_queue = op_add_process_to_blocked_queue;
     self->free_process_table = op_free_process_list;
+    self->update_process = op_pro_update_process;
 
     return true;
 }

@@ -9,6 +9,7 @@
 
 #include "../../src/operations/schedular.c"
 #include "../../src/operations/ressource_manager.c"
+#include "../../src/operations/process_manager.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -147,7 +148,7 @@ WORK_RETURN op_simul_stop(SIMULATOR* self) {
     WORK_RETURN stop_ressource_manager = self->ressource_manager->kill(self->ressource_manager);
 
     if (stop_process_manager != WORK_DONE || stop_ressource_manager != WORK_DONE || stop_schedular != WORK_DONE) {
-        return ERROR;
+        return WORK_ERROR;
     }
 
 
@@ -155,20 +156,108 @@ WORK_RETURN op_simul_stop(SIMULATOR* self) {
 
 }
 
+// ------------------------helpers
+
+
+OPTIONS op_ask_for_options() {
+    int algorithm;
+    float quantum;
+
+    do {
+        printf("Hello\n\twhich algorithm you wish to run :\n");
+        printf("0: RR\n");
+        printf("1: SRTF\n");
+        printf("2: PPP\n");
+        printf("3: FCFS\n");
+        printf("4: SJF\n");
+        scanf("%d", &algorithm);
+
+        if (algorithm == 0) {
+            printf("quantum (in ms)\n");
+            scanf("%f", &quantum);
+        }
+
+    } while (algorithm != 0 && algorithm != 1 && algorithm != 2 && algorithm != 3 && algorithm != 4);
+
+    OPTIONS return_value;
+    return_value.algorithm = algorithm;
+    return_value.quantum = quantum;
+    
+    return return_value;
+}
+
+
+
+PROCESS_MANAGER* create_process_manager() {
+    
+    PROCESS_MANAGER* process_manager = (PROCESS_MANAGER*)malloc(sizeof(PROCESS_MANAGER)); // allocate process manager
+    
+    if (process_manager == NULL) {
+        fprintf(stderr, "ERROR ON: create_process_manager , process_manager allocation failed\n");
+        exit(1);
+    }
+
+    return process_manager;
+}
+
+ORDONNANCEUR* op_create_schedular(Algorithms algorithm, int quantum) {
+
+    ORDONNANCEUR* schedular = (ORDONNANCEUR*)malloc(sizeof(ORDONNANCEUR)); // init the schedular    
+
+    if (schedular == NULL) {
+        fprintf(stderr, "ERROR ON: op_create_schedular: Failed to allocate memory for schedular\n");
+        exit(1);
+    }
+
+    schedular->algorithm = algorithm;
+    schedular->quantum = quantum;
+
+    return schedular;
+}
+
+
+RESSOURCE_MANAGER* op_create_ressource_manager() {
+
+    RESSOURCE_MANAGER* ressource_manager = (RESSOURCE_MANAGER*)malloc(sizeof(RESSOURCE_MANAGER)); // init the schedular    
+
+    if (ressource_manager == NULL) {
+        fprintf(stderr, "ERROR ON: op_create_schedular: Failed to allocate memory for schedular\n");
+        exit(1);
+    }
+
+    return ressource_manager;
+}
+
 
 
 WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
+
+    self->run = op_run;
+    self->update_process = op_sched_update_process;
+    self->check_ressource_disponibility = op_check_ressource_disponibility;
+    self->signal_ressource_is_free = op_signal_ressource_is_free;
+    self->stop = op_simul_stop;
+    self->ask_for_options = op_ask_for_options;
+    self->create_process_manager = create_process_manager;
+    self->create_schedular = op_create_schedular;
+    self->create_ressource_manager = op_create_ressource_manager;
+
     
     // ---------- process manager
-
+    printf("hit op_simul_init\n\n\n");
 
     OPTIONS options = self->ask_for_options();
 
+    printf("hit finished ask_for_options\n\n\n");
+    
     self->process_manager = self->create_process_manager(); // create process manager
+
+    self->process_manager->init = op_pro_init; // assign the initializer function
 
     self->process_manager->init(self->process_manager, buffer, options.algorithm);
 
     // ---------- ressource list
+    printf("hit create_ressource_manager\n\n\n");
 
     self->ressource_manager = self->create_ressource_manager(); // create ressource manager
 
@@ -177,21 +266,15 @@ WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
     self->ressource_manager->init(self->ressource_manager);
 
     // ---------- schedular
- 
-    self->schedular = self->create_schedular(options.algorithm, options.quantum); // create schedular
-    
+    printf("hit create_schedular\n\n\n");
+
+    self->schedular = self->create_schedular(options.algorithm, options.quantum); // create schedular    
+
     self->schedular->init = op_sched_init; // assign the initialization function to schedular
 
     self->schedular->init(self->schedular, self, options); // then init it
 
     // ------- simulator
-
-    self->run = op_run;
-    self->update_process = op_sched_update_process;
-    self->check_ressource_disponibility = op_check_ressource_disponibility;
-    self->signal_ressource_is_free = op_signal_ressource_is_free;
-    self->stop = op_simul_stop;
-
 
     return WORK_DONE;
 }

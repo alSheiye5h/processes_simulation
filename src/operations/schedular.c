@@ -130,7 +130,7 @@ WORK_RETURN sched_kill(ORDONNANCEUR* self) {
     free(self->statistics);
     
     if (self->execution_queue->kill(self->execution_queue) != WORK_DONE) {
-        return ERROR;
+        return WORK_ERROR;
     }
 
     free(self);
@@ -142,14 +142,14 @@ WORK_RETURN sched_kill(ORDONNANCEUR* self) {
 
 WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 
-    printf('hiiiiiit');
+    printf('hiiiiiit select_rr\n\n\n');
 
     do {
     
         self->exec_proc = self->sched_ask_for_next_ready_element(self, self->exec_proc); // get the next element
 
         if (self->execution_queue->execute_rr((self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum) != WORK_DONE) { // if remaining time is less than the quantum then execute for remaining time not quantum else execute for quantum
-            return ERROR;
+            return WORK_ERROR;
         }
 
         time_t daba;
@@ -167,13 +167,13 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
             process_update update = self->update_process(self, self->exec_proc, temps_fin_ptr, &quantum);
             
             if (update != UPDATED) {
-                return ERROR;
+                return UPDATE_ERROR;
             }
 
             if (
                 self->update_schedular_statistics(self, &n_quantum, &self->exec_proc->burst_time, &self->exec_proc->statistics->temps_attente, true) != true // changed not good
             ) {
-                return ERROR;
+                return UPDATE_ERROR;
             }
 
             
@@ -182,13 +182,13 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
             process_update update = self->update_process(self, self->exec_proc, temps_fin_ptr, &quantum);
 
             if (update != UPDATED) {
-                return ERROR;
+                return UPDATE_ERROR;
             }
 
             if (
                 self->update_schedular_statistics(self, &quantum, NULL, NULL, false) != true // changed not good
             ) {
-                return ERROR;
+                return UPDATE_ERROR;
             }
 
         }
@@ -202,6 +202,8 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 }
 
 ORDONNANCEUR* op_sched_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS options) {
+
+    printf("hiiit op_sched_init\n\n\n");
 
     // function assigning
     self->create_execution_queue = op_create_execution_queue;

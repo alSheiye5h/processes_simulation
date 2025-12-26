@@ -7,6 +7,9 @@ int main() {
 
     SIMULATOR* simulator = (SIMULATOR*)malloc(sizeof(SIMULATOR));
 
+    
+    printf("hit main\n\n\n");
+
     FILE* buffer = fopen("data.csv", "r");
 
     simulator->init = op_simul_init;

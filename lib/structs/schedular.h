@@ -13,7 +13,7 @@ typedef enum {
 
 
 typedef enum {
-    UPDATED, ERROR
+    UPDATED, UPDATE_ERROR
 } process_update; // moved here for the compiler
 
 

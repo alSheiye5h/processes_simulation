@@ -1,7 +1,7 @@
 #pragma once
 
-#include "structs/process.h"
-#include "structs/process_manager.h"
+#include "../../../lib/structs/process.h"
+#include "../../../lib/structs/process_manager.h"
 
 #include <stdbool.h>
 #include <string.h>

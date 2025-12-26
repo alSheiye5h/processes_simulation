@@ -12,7 +12,7 @@ typedef enum {
 } init_rm;
 
 
-typedef struct {
+typedef struct RESSOURCE_MANAGER {
     RESSOURCE_ELEMENT* ressources; // again using malloc to allocate N ressources
     int ressource_count; // n ressources
 
@@ -31,6 +31,7 @@ typedef struct {
     bool (*free_ressource_list) (struct RESSOURCE_MANAGER* self);
 
     WORK_RETURN (*kill)(struct RESSOURCE_MANAGER* self);
+
 
 } RESSOURCE_MANAGER;
 
