@@ -2,10 +2,8 @@
 #include <stdbool.h>
 
 #include "../../lib/structs/process_manager.h"
-#include "../../lib/operations/process_manager.h"
 #include "../../lib/structs/process.h"
 #include "../../lib/structs/simulator.h"
-
 
 #include "../../src/operations/process_manager.c"
 #include "../../src/operations/helpers/process_manager.c"
@@ -501,16 +499,15 @@ PROCESS_MANAGER* op_run(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
     return self;
 }
 
-bool pro_init(PROCESS_MANAGER* self, SIMULATOR* simulator, OPTIONS options) {
+bool pro_init(PROCESS_MANAGER* self) {
 
-}
+    self->create_process_table = op_create_process_table;
+    self->create_ready_queue = op_create_ready_queue;
+    self->create_blocked_queue = op_create_blocked_queue;
+    self->push_to_ready_queue = op_push_to_ready_queue;
+    self->delete_from_ready_queue = op_delete_from_ready_queue;
+    self->add_process_to_blocked_queue = op_add_process_to_blocked_queue;
 
-PCB* op_assign_functions_to_pcb(PCB* pcb) {
-    pcb->update_temps_attente = op_update_temps_attente;
-    pcb->mark_instruction_terminated = op_mark_instruction_terminated;
-    pcb->update_temps_arrive = op_update_temps_arrive;
-    pcb->update_temps_creation = op_update_temps_creation;
-    pcb->update_temps_fin = op_update_temps_fin;
-    pcb->define_next = op_pcb_define_next;
-    pcb->define_previous = op_pcb_define_previous;
+    return true;
+
 }
