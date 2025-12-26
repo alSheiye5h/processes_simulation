@@ -1,11 +1,15 @@
 #pragma once
 #include <stdbool.h>
 
-#include "structs/process_manager.h"
-#include "operations/process_manager.h"
-#include "structs/process.h"
-#include "operations/helpers/process_manager.h"
-#include "operations/process.h"
+#include "../../lib/structs/process_manager.h"
+#include "../../lib/operations/process_manager.h"
+#include "../../lib/structs/process.h"
+#include "../../lib/structs/simulator.h"
+
+
+#include "../../src/operations/process_manager.c"
+#include "../../src/operations/helpers/process_manager.c"
+
 
 // initialization
 PCB* op_create_process_table(FILE* buffer) {
@@ -309,7 +313,7 @@ PCB* op_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *temps_fin, float
 
     // updating the given fields
     if (temps_fin) { // updating temp fin = update tournround
-        
+
         pcb->statistics->temps_fin = *temps_fin;
         pcb->statistics->tournround = *temps_fin - pcb->statistics->temps_arrive;
         pcb->statistics->temps_attente = pcb->statistics->tournround - pcb->burst_time;
@@ -495,6 +499,10 @@ PROCESS_MANAGER* op_run(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
     self->blocked_queue_head = blocked_queue_head;
 
     return self;
+}
+
+bool pro_init(PROCESS_MANAGER* self, SIMULATOR* simulator, OPTIONS options) {
+
 }
 
 PCB* op_assign_functions_to_pcb(PCB* pcb) {
