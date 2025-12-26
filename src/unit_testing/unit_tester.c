@@ -12,52 +12,91 @@
 // #include "structs/ressource.h"
 // #include "structs/process_manager.h"
 // #include "structs/ressource.h"
+  
+#include "../../lib/structs/simulator.h"
+#include "../../src/implementation/simulator.c"
+#include "../../src/implementation/process_manager.c"
+#include "../../src/implementation/ressource_manager.c"
+#include "../../src/implementation/helpers/process_manager.c"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
 
 
-
-// void print_pcb(PCB* pcb) {
-//     printf("process_id: %d\n", pcb->pid);
-//     printf("process_name: %s\n", pcb->process_name);
-//     printf("user_id: %s\n", pcb->user_id);
-//     printf("priority: %d\n", pcb->prioritie);
-//     printf("programe_counter: %d\n", pcb->programme_compteur);
-//     printf("memoire: %d\n", pcb->memoire_necessaire);
-//     printf("burst time: %f\n", pcb->burst_time);
-//     printf("remaining time: %f\n", pcb->remaining_time);
-//     printf("temps d arriver: %f\n", pcb->statistics->temps_arrive);
-//     printf("first instruction id: %d\n", pcb->instructions_head->instruct_id);
-//     printf("process %s\n", ctime(&pcb->statistics->temps_creation)); // to format
-//     // INSTRUCTION* instructions_head
-//     INSTRUCTION* TEMP = pcb->instructions_head;
-//     while (TEMP->next != NULL) { // enum are intigers
-//         // typedef enum {
-//         //     AAA, BBB, CCC, DDD, EEE, FFF
-//         // } RESSOURCE;
+void print_pcb(PCB* pcb) {
+    if (pcb == NULL) {
+        printf("PCB is NULL\n");
+        return;
+    }
+    printf("process_id: %d\n", pcb->pid);
+    printf("process_name: %s\n", pcb->process_name);
+    printf("user_id: %s\n", pcb->user_id);
+    printf("priority: %d\n", pcb->prioritie);
+    printf("programe_counter: %d\n", pcb->programme_compteur);
+    printf("memoire: %d\n", pcb->memoire_necessaire);
+    printf("burst time: %f\n", pcb->burst_time);
+    printf("remaining time: %f\n", pcb->remaining_time);
+    printf("temps d arriver: %f\n", pcb->statistics->temps_arrive);
+    
+    if (pcb->instructions_head) {
+        printf("first instruction id: %d\n", pcb->instructions_head->instruct_id);
+    }
+    
+    if (pcb->statistics) {
+        time_t creation_time = (time_t)pcb->statistics->temps_creation;
+        printf("process %s\n", ctime(&creation_time)); // to format
+    }
+    // INSTRUCTION* instructions_head
+    INSTRUCTION* TEMP = pcb->instructions_head;
+    while (TEMP != NULL) { // enum are intigers
+        // typedef enum {
+        //     AAA, BBB, CCC, DDD, EEE, FFF
+        // } RESSOURCE;
         
-//         switch (TEMP->type) {
-//             case 0:
-//                 printf("instruct : AAA\n");
-//                 break;
-//             case 1: 
-//                 printf("instruct : BBB\n");
-//                 break;
-//             case 2: 
-//                 printf("instruct : CCC\n");
-//                 break;
-//             case 3: 
-//                 printf("instruct : DDD\n");
-//                 break;
-//             case 4: 
-//                 printf("instruct : EEE\n");
-//                 break;
-//             case 5: 
-//                 printf("instruct : FFF\n");
-//                 break;
-//         }
-//         TEMP = TEMP->next;
-//     }
-//     // kob lia hloben a wliidi raho khdem
-// }
+        switch (TEMP->type) {
+            case 0:
+                printf("instruct : AAA\n");
+                break;
+            case 1: 
+                printf("instruct : BBB\n");
+                break;
+            case 2: 
+                printf("instruct : CCC\n");
+                break;
+            case 3: 
+                printf("instruct : DDD\n");
+                break;
+            case 4: 
+                printf("instruct : EEE\n");
+                break;
+            case 5: 
+                printf("instruct : FFF\n");
+                break;
+        }
+        TEMP = TEMP->next;
+    }
+    // kob lia hloben a wliidi raho khdem
+}
+
+
+void print_pcb_chaine(PCB* pcb_head) {
+
+    PCB* temp = pcb_head;
+    bool circular = false;
+
+    while (temp != NULL) {
+        if (circular == true && temp == pcb_head) {
+            break;
+        }
+        circular = true;
+        print_pcb(temp);
+        temp = temp->pid_sibling_next;
+    }
+
+
+}
 
 // PCB* testing_the_csv_parsing() {
 //     FILE* csv_buffer = fopen("/home/zeus/projects/processus_simulation/unit_testing/csv_testin_parocess_manager_parsing.csv", "r");
@@ -182,15 +221,8 @@ gcc -Wall -Wextra -std=c11 \
     -o unit_test
   
 */
-  
-#include "../../lib/structs/simulator.h"
-#include "../../src/implementation/simulator.c"
-#include "../../src/implementation/process_manager.c"
-#include "../../src/implementation/ressource_manager.c"
-#include "../../src/implementation/helpers/process_manager.c"
 
-#include <stdio.h>
-#include <stdlib.h>
+
 
 void test_runing() {
 
@@ -204,7 +236,30 @@ void test_runing() {
 
     simulator->init(simulator, buffer);
 
+
     simulator->stop(simulator);
+
+    fclose(buffer);
+
+}
+
+void testing_parser() {
+
+    FILE* buffer = fopen("/home/zeus/projects/processus_simulation/src/unit_testing/data_testing.csv", "r");
+
+    if (!buffer) {
+        perror("fopen");
+        exit(1);
+    }
+
+    PCB* pcb_head = extract_from_buffer(buffer);
+
+    if (pcb_head == NULL) {
+        fprintf(stderr, "ERROR ON: extract_from_buffer failed has returned NULL\n");
+        exit(1);
+    }
+
+    print_pcb_chaine(pcb_head);
 
     fclose(buffer);
 
@@ -215,7 +270,12 @@ void test_runing() {
 void test_process_manager_initialization() {
 
 
-    FILE* buffer = fopen("data.csv", "r");
+    FILE* f = fopen("/home/zeus/projects/processus_simulation/src/unit_testing/data_testing.csv", "r");
+
+    if (!f) {
+        perror("fopen");
+        exit(1);
+    }
 
     PROCESS_MANAGER* process_manager = (PROCESS_MANAGER*)malloc(sizeof(PROCESS_MANAGER));
     
@@ -224,10 +284,16 @@ void test_process_manager_initialization() {
         exit(1);
     }
     process_manager->init = op_pro_init; // assign the initializer function
+    
+    printf("finished  process_manager->init = op_pro_init\n");
 
-    process_manager->init(process_manager, buffer, 0);
+    process_manager->init(process_manager, f, 0);
+    
+    printf("finished process_manager->init\n");
 
-    fclose(buffer);
+    print_pcb_chaine(process_manager->process_table_head);
+
+    fclose(f);
 
 }
 
@@ -260,6 +326,7 @@ int main() {
 
     test_process_manager_initialization();
 
+    // testing_parser();
 
     return 0;
 }

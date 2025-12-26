@@ -1,33 +1,3 @@
-typedef struct {
-    int pid;
-    char process_name[20];
-    char user_id[20];
-    int ppid;
-    E_etat etat; // one of the values in the enum e_etat
-    int prioritie; // priorities from 1 to 5 ; 1-critical
-
-    INSTRUCTION* instructions;
-    long programme_compteur; // max 9,223,372,036,854,775,807 instruction
-    int memoire_necessaire; // en MB
-    INSTRUCTION* current_instruction; // l'instruction en train de s executer
-
-    int burst_time; // total temps necessaire en ms pour l'exec . burst = compte_temps + temps_restant
-    float cpu_time_used; // temps cpu consomme en ms init 0
-    int remaining_time; // temps restant : = burst - cpu_time_used
-    int cpu_usage; // initialized as 0
-
-    PROCESS_STATISTICS* statistics; 
-
-    int* pid_childrens;
-    PCB* pid_sibling_next; // pointeur vers next sib
-    PCB* pid_sibling_previous; // pointeur vers previous sib
-} PCB;
-
-
-
-process_name(20),user_id(20),priority(from 1 to 5),[instruction max 20000 3char each shouldnt have spaces](string),n_instruction(int),memoire(int),burst(float),
-
-
 PROC01,USER01,1,[AAA],1,256,1.0,6372.3
 PROC02,USER02,2,[AAA.BBB],2,512,2.5,10.5
 PROC03,USER03,3,[AAA.BBB.CCC],3,1024,3.2,25.3
