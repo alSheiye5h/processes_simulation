@@ -363,6 +363,23 @@ PCB* op_delete_from_ready_queue(PCB* ready_queue_head, PCB* pcb) {// the chaine 
     // if the head that need to be deleted
     if (ready_queue_head == pcb) {
         PCB* hold = ready_queue_head->pid_sibling_next;
+
+        // Check if the list is circular and update the tail if necessary
+        PCB* tail = ready_queue_head;
+        while (tail->pid_sibling_next != NULL && tail->pid_sibling_next != ready_queue_head) {
+            tail = tail->pid_sibling_next;
+        }
+
+        // If it is circular (tail points to head)
+        if (tail->pid_sibling_next == ready_queue_head) {
+            if (tail == ready_queue_head) {
+                // Single element circular list
+                hold = NULL;
+            } else {
+                // Update tail to point to the new head
+                tail->pid_sibling_next = hold;
+            }
+        }
         
         // Free instructions list first
         INSTRUCTION* current = pcb->instructions_head;
@@ -399,6 +416,12 @@ PCB* op_delete_from_ready_queue(PCB* ready_queue_head, PCB* pcb) {// the chaine 
             free(current);
             break;
         }
+
+        // Safety check: if we circled back to head, stop to avoid infinite loop
+        if (current == ready_queue_head) {
+            break;
+        }
+
         prcd = current;
         current = current->pid_sibling_next;
     }

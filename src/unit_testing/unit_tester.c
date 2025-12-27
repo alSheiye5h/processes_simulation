@@ -407,6 +407,7 @@ void test_simulator_initialization() {
 
 
 // testing work
+// rr is working mozafak
 void test_simulator_work() { 
 
    SIMULATOR* simulator = (SIMULATOR*)malloc(sizeof(SIMULATOR));
