@@ -9,7 +9,6 @@
 #include <string.h>
 
 
-#define ressource_number 6
 
 // on start
 RESSOURCE_ELEMENT* op_create_ressource_list(void) {

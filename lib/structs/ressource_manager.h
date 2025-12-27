@@ -5,6 +5,7 @@
 #include "../../lib/structs/ressource.h"
 #include "../../lib/structs/execution_queue.h"
 
+#define ressource_number 6
 
 
 typedef enum {

@@ -242,6 +242,10 @@ push_return op_simul_push_to_blocked_queue(SIMULATOR* self, PCB* pcb) {
 }
 
 
+PCB* op_simul_get_ready_queue_head(SIMULATOR* self) {
+    return self->process_manager->get_ready_queue_head(self->process_manager);
+}
+
 
 
 WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
@@ -263,6 +267,8 @@ WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
     self->create_schedular = op_create_schedular;
     self->create_ressource_manager = op_create_ressource_manager;
     self->simul_ask_for_next_ready_element = op_simul_ask_for_next_ready_element;
+    self->simul_get_ready_queue_head = op_simul_get_ready_queue_head;
+    self->simul_push_to_blocked_queue = op_simul_push_to_blocked_queue;
 
     
     // ---------- process manager

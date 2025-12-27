@@ -66,4 +66,6 @@ typedef struct SIMULATOR {
 
     push_return (*simul_push_to_blocked_queue)(struct SIMULATOR* self, PCB* pcb);
 
+    PCB* (*simul_get_ready_queue_head) (ORDONNANCEUR* self);
+
 } SIMULATOR;

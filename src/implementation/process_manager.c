@@ -430,6 +430,11 @@ PCB* op_delete_from_ready_queue(PCB* ready_queue_head, PCB* pcb) {// the chaine 
     return ready_queue_head;
 }
 
+PCB* op_get_ready_queue_head(PROCESS_MANAGER* self) {
+    return self->ready_queue_head;
+}
+
+
 // bloqued queue related
 PCB* op_add_process_to_blocked_queue(PROCESS_MANAGER* process_manager, PCB* pcb) { // should covert pcb to BLOCKED_QUEUE_ELEMENT then push it
 
@@ -483,7 +488,7 @@ PCB* op_delete_from_blocked_queue(PROCESS_MANAGER* self, PCB* pcb) {
             free(current);
             break;
         }
-        prev = current;        
+        prev = current;
         current = current->pid_sibling_next;
     }
 

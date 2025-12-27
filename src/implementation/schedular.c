@@ -12,6 +12,7 @@
 #include "../../lib/structs/process.h"
 #include "../../lib/structs/process_manager.h"
 #include "../../lib/structs/simulator.h"
+#include "../../lib/structs/ressource_manager.h"
 
 #include "../../src/implementation/execution_queue.c"
 
@@ -146,6 +147,10 @@ WORK_RETURN sched_kill(ORDONNANCEUR* self) {
     return WORK_DONE;
 }
 
+PCB* op_sched_get_ready_queue_head(ORDONNANCEUR* self) {
+    return self->simulator->simul_get_ready_queue_head(self->simulator);
+}
+
 
 WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 
@@ -167,25 +172,51 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 
         float time_to_run = (self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum;
 
-        // handle ressource before executing
+        // ------- handle ressource before executing
 
-        INSTRUCTION* next = self->exec_proc->instructions_head;
+        INSTRUCTION* next_instruct = self->exec_proc->instructions_head;
+        RESSOURCE ressources[ressource_number] = {0};
+        int ressource_count = 0;
 
-        while (next != NULL) {
+        while (next_instruct != NULL && ressource_count < ressource_number) {
 
-            RESSOURCE ressource_needed = next->type;
+            RESSOURCE ressource_needed = next_instruct->type;
+            bool already = false;
 
-            if (self->check_ressource_disponibility(self, ressource_needed) == false) {
-                
-
-
-
-                continue; // to start loop from begining
+            // Check if resource is already in the array
+            for (int i = 0; i < ressource_count; i++) {
+                if (ressources[i] == ressource_needed) {
+                    already = true;
+                    break;  // Exit loop early if found
+                }
             }
 
-            next = next->next;
+            // If not already in array, add it
+            if (!already) {
+                ressources[ressource_count] = ressource_needed;
+                ressource_count++;
+            }
+
+            next_instruct = next_instruct->next;
         }
 
+        for (int i = 0; i < ressource_count; i++) {
+
+            if (self->check_ressource_disponibility(self, ressources[i]) == false) {
+
+                if (self->sched_push_to_blocked_queue(self, self->exec_proc) == PUSHED) {
+                    continue;
+                } else {
+                    fprintf(stderr, "ERROR ON: sched_push_to_blocked_queue returned PUSH_ERROR\n");
+                    return WORK_ERROR;
+                }
+
+            }
+        
+        }
+
+
+        // ------- end handle ressource
 
         if (self->execution_queue->execute_rr(time_to_run) != WORK_DONE) { 
             return WORK_ERROR;
@@ -227,6 +258,8 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
             // Update exec_proc to the next node we found earlier
             self->exec_proc = next_node;
             fetch_next = false; // Skip fetching in the next loop iteration since we already have the correct next node
+
+            // updating process in blocked queue
             
         } else {
 
@@ -273,7 +306,7 @@ ORDONNANCEUR* op_sched_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS* o
     self->update_process = op_update_process;
     self->kill = sched_kill;
     self->sched_push_to_blocked_queue = op_sched_push_to_blocked_queue;
-    
+    self->sched_get_ready_queue_head = op_sched_get_ready_queue_head;
     
     switch (options->algorithm) {
         case 0:

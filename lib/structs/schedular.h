@@ -21,8 +21,6 @@ typedef enum {
     WORK_DONE, WORK_ERROR
 } WORK_RETURN;
 
-
-
 typedef enum {
 
     FINISHED,      // Instruction executed successfully
@@ -108,6 +106,8 @@ typedef struct ORDONNANCEUR {
 
     // push to blocked queue if ressource is not disponible
     push_return (*sched_push_to_blocked_queue)(struct ORDONNANCEUR* self, PCB* pcb);
+
+    PCB* (*sched_get_ready_queue_head) (ORDONNANCEUR* self);
 
 } ORDONNANCEUR;
 
