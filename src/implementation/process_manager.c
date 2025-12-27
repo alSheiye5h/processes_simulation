@@ -286,6 +286,11 @@ PCB* op_sort_ready_by_priority(PROCESS_MANAGER* process_manager) {
     return sorted_head;
 }
 
+bool op_update_self_temps(PROCESS_MANAGER* self, float temps) {
+    self->temps = temps;
+    return true;
+}
+
 PCB* op_sort_ready_by_burst(PROCESS_MANAGER* process_manager) {
 
     PCB* ready_queue_head = process_manager->ready_queue_head;
@@ -324,11 +329,38 @@ PCB* op_sort_ready_by_burst(PROCESS_MANAGER* process_manager) {
     return sorted_head;
 }
 
+
 PCB* op_create_blocked_queue() {
     // i think i just need to init it and when a process is blocked will be chained
     return NULL; // same a declaring pcb* pcb = null and return it
 }
 
+
+bool op_update_read_queue(PROCESS_MANAGER* self) {
+
+    PCB* next = self->process_table_head;
+    bool inserted = false;
+
+    // Safety check: if process table is empty, return false
+    if (next == NULL) {
+        return false;
+    }
+
+    do {
+        if (next != NULL && next->statistics != NULL) {
+            if (next->statistics->temps_arrive == self->temps) {
+                if (self->push_to_ready_queue(self, next) != NULL) { // push it to the end of ready_queue
+                    inserted = true;    
+                }
+            }
+        }
+
+        next = self->get_next_process_table(self, next);
+
+    } while (next != NULL);
+
+    return inserted;
+}
 
 //pcb related
 // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
@@ -363,35 +395,47 @@ process_update op_pro_update_process(PROCESS_MANAGER* self, PCB* pcb, time_t *te
 
 
 // ready queue related
-PCB* op_push_to_ready_queue(PCB* ready_queue_head, struct PCB* pcb) {// LIST CREATED NEED TO BEE FREE AFRTER ASSIGNING IT TO the proces_manager ready queue
+PCB* op_push_to_ready_queue(PROCESS_MANAGER* self, struct PCB* pcb) {
+
+    PCB* ready_queue_head = self->get_ready_queue_head(self);
+
     if (pcb == NULL) {
-        return ready_queue_head;  // Nothing to add
+        return ready_queue_head;
     }
+
+    // Initialize new PCB's next pointer
+    pcb->pid_sibling_next = NULL;
 
     if (ready_queue_head == NULL) {
-        return pcb; // the new pcb will be the ready queue head but i think that the condition will not be true, because of the function of ready_queue
+        // First element - make it circular (point to itself)
+        pcb->pid_sibling_next = pcb;
+        return pcb;
     }
 
-    PCB* last = ready_queue_head; // the last in chaine
-
-    // check it's circular with one element
-    if (last->pid_sibling_next == ready_queue_head) {
+    // Find the last element
+    PCB* last = ready_queue_head;
+    
+    // Check if list is circular
+    if (ready_queue_head->pid_sibling_next == ready_queue_head) {
+        // Single element circular list
         ready_queue_head->pid_sibling_next = pcb;
-        pcb->pid_sibling_next = ready_queue_head; // keep it circular
+        pcb->pid_sibling_next = ready_queue_head; // Make it circular
     } else {
-        // a simplke chaine or circular with multiple elements
-        while (last->pid_sibling_next != NULL && last->pid_sibling_next != ready_queue_head) { // the second check is for circularity
-            last = last->pid_sibling_next; // jump by one element
+        // Multi-element list, find last
+        while (last->pid_sibling_next != ready_queue_head && last->pid_sibling_next != NULL) {
+            last = last->pid_sibling_next;
         }
-
-        // insert in the end
+        
+        // Insert at end
         last->pid_sibling_next = pcb;
-        pcb->pid_sibling_next = NULL;
-
-
-        // if circular
+        
+        // Check if it was circular
         if (last->pid_sibling_next == ready_queue_head) {
+            // It was circular, maintain circularity
             pcb->pid_sibling_next = ready_queue_head;
+        } else {
+            // It was linear, keep it linear
+            pcb->pid_sibling_next = NULL;
         }
     }
     
@@ -425,7 +469,7 @@ PCB* op_delete_from_ready_queue(PCB* ready_queue_head, PCB* pcb) {// the chaine 
             }
         }
         
-        // Free instructions list first
+        // free instructions list first
         INSTRUCTION* current = pcb->instructions_head;
         INSTRUCTION* next;
         while (current != NULL) {
@@ -633,6 +677,8 @@ bool op_pro_init(PROCESS_MANAGER* self, FILE* buffer, int algorithm) {
     self->get_next_process_table = op_get_next_process_table;
     self->insert_after_ready = op_insert_after_ready;
     self->free_ready_queue = op_free_ready_queue;
+    self->update_read_queue = op_update_read_queue;
+    self->update_self_temps = op_update_self_temps;
 
     // self->sort_ready_by_fc = op_sort_ready_by_fc;
     // self->sort_ready_by_rt = op_sort_ready_by_rt;

@@ -68,4 +68,6 @@ typedef struct SIMULATOR {
 
     PCB* (*simul_get_ready_queue_head) (ORDONNANCEUR* self);
 
+    bool (*simul_update_process_manager) (struct SIMULATOR* self, FILE* processus_buffer, float* temps);
+
 } SIMULATOR;

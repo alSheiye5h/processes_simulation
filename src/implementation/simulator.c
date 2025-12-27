@@ -84,7 +84,20 @@ ORDONNANCEUR* op_start_schedular(Algorithms algorithm, int quantum, SIMULATOR* s
     return schedular;
 }
 
+bool op_simul_update_process_manager(SIMULATOR* self, FILE* processus_buffer, float* temps) {
 
+    bool updated = false;
+    
+    if (temps) {
+        updated = self->process_manager->update_self_temps(self->process_manager, *temps);
+    }
+
+    if (processus_buffer) {
+        // logic of modifying buffer
+    }
+
+    return updated;
+}
 
 
 bool op_signal_ressource_is_free(RESSOURCE_MANAGER* ressource_manager, RESSOURCE ressource) {
@@ -269,6 +282,7 @@ WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
     self->simul_ask_for_next_ready_element = op_simul_ask_for_next_ready_element;
     self->simul_get_ready_queue_head = op_simul_get_ready_queue_head;
     self->simul_push_to_blocked_queue = op_simul_push_to_blocked_queue;
+    self->simul_update_process_manager = op_simul_update_process_manager;
 
     
     // ---------- process manager

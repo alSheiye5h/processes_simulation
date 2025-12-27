@@ -37,7 +37,7 @@ typedef struct PROCESS_MANAGER {
     process_update (*update_process)(struct PROCESS_MANAGER* self, PCB* pcb, time_t* temps_fin, float* cpu_temps_used); // with nullty check; updating temps_fin = market_terminated = update_turnround ; updating cpu_temps_used = updating_remaining_time
 
     //ready queue related
-    struct PCB* (*push_to_ready_queue)(struct PCB* ready_queue_head, struct PCB* pcb); // LIST CREATED NEED TO BEE FREE AFRTER ASSIGNING IT TO the proces_manager ready queue
+    struct PCB* (*push_to_ready_queue)(struct PROCESS_MANAGER* self, struct PCB* pcb); // LIST CREATED NEED TO BEE FREE AFRTER ASSIGNING IT TO the proces_manager ready queue
     struct PCB* (*delete_from_ready_queue)(struct PCB* ready_queue_head, PCB* pcb); // the chaine node should be freed
     struct PCB* (*move_process_to_ready)(struct PCB* ready_queue_head, PCB* pcb);
     struct PCB* (*get_next_ready_element) (struct PROCESS_MANAGER* self, PCB* current_pcb);
@@ -62,6 +62,12 @@ typedef struct PROCESS_MANAGER {
     struct PCB* (*insert_after_ready) (PROCESS_MANAGER* self, PCB* after_pcb, PCB* pcb_to_insert);
 
     void (*free_ready_queue) (struct PCB* head);
+
+    bool (*update_read_queue) (struct PROCESS_MANAGER* self);
+
+    // setters
+
+    bool (*update_self_temps) (struct PROCESS_MANAGER* self, float temps);
 
     
 } PROCESS_MANAGER;
