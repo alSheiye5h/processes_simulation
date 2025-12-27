@@ -52,7 +52,6 @@ RESSOURCE_ELEMENT* op_create_ressource_list(void) {
     return ressources_head;
 }
 
-
 // ressources operations
 RESSOURCE_ELEMENT* op_look_for_ressource_in_list(RESSOURCE_MANAGER* self, RESSOURCE ressource) {
 

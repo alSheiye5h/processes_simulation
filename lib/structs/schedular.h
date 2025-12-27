@@ -32,6 +32,9 @@ typedef enum {
 
 }  process_return;
 
+typedef enum {
+    PUSHED, PUSH_ERROR
+} push_return;
 
 typedef struct OPTIONS {
 
@@ -102,6 +105,9 @@ typedef struct ORDONNANCEUR {
     WORK_RETURN (*select)(struct ORDONNANCEUR* self, float quantum); // will be pointing on one of 5 functions depens on the algorithm
 
     WORK_RETURN (*kill) (struct ORDONNANCEUR* self);
+
+    // push to blocked queue if ressource is not disponible
+    push_return (*sched_push_to_blocked_queue)(struct ORDONNANCEUR* self, PCB* pcb);
 
 } ORDONNANCEUR;
 

@@ -146,7 +146,6 @@ WORK_RETURN sched_kill(ORDONNANCEUR* self) {
     return WORK_DONE;
 }
 
-#include "../../src/unit_testing/unit_tester.c"
 
 WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 
@@ -166,9 +165,27 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
              if (self->exec_proc == NULL) break; // List is empty
         }
 
-        print_pcb(self->exec_proc);
-
         float time_to_run = (self->exec_proc->remaining_time < quantum) ? self->exec_proc->remaining_time : quantum;
+
+        // handle ressource before executing
+
+        INSTRUCTION* next = self->exec_proc->instructions_head;
+
+        while (next != NULL) {
+
+            RESSOURCE ressource_needed = next->type;
+
+            if (self->check_ressource_disponibility(self, ressource_needed) == false) {
+                
+
+
+
+                continue; // to start loop from begining
+            }
+
+            next = next->next;
+        }
+
 
         if (self->execution_queue->execute_rr(time_to_run) != WORK_DONE) { 
             return WORK_ERROR;
@@ -235,6 +252,12 @@ WORK_RETURN select_rr(ORDONNANCEUR* self, float quantum) {
 }
 
 
+push_return op_sched_push_to_blocked_queue(ORDONNANCEUR* self, PCB* pcb) {
+
+    return self->simulator->simul_push_to_blocked_queue(self->simulator, pcb);
+}
+
+
 ORDONNANCEUR* op_sched_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS* options) {
 
     // function assigning
@@ -249,6 +272,8 @@ ORDONNANCEUR* op_sched_init(ORDONNANCEUR* self, SIMULATOR* simulator, OPTIONS* o
     self->check_ressource_disponibility = op_check_ressource_disponibility;
     self->update_process = op_update_process;
     self->kill = sched_kill;
+    self->sched_push_to_blocked_queue = op_sched_push_to_blocked_queue;
+    
     
     switch (options->algorithm) {
         case 0:

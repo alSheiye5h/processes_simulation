@@ -431,9 +431,15 @@ PCB* op_delete_from_ready_queue(PCB* ready_queue_head, PCB* pcb) {// the chaine 
 }
 
 // bloqued queue related
-PCB* op_add_process_to_blocked_queue(PCB* blocked_queue_head, PCB* pcb) { // should covert pcb to BLOCKED_QUEUE_ELEMENT then push it
+PCB* op_add_process_to_blocked_queue(PROCESS_MANAGER* process_manager, PCB* pcb) { // should covert pcb to BLOCKED_QUEUE_ELEMENT then push it
+
+    PCB* blocked_queue_head = process_manager->blocked_queue_head;
+
+    pcb->etat = BLOCKED;  // mark it as blocked
+    pcb->pid_sibling_next = NULL; // clearing the pointer tpo next
 
     if (blocked_queue_head == NULL) { // if there is no process in the blocked the pcb will be the head
+        process_manager->blocked_queue_head = pcb;  // so updating the head setting it as the pcb giving in the arguments
         return pcb;
     }
 
@@ -443,12 +449,17 @@ PCB* op_add_process_to_blocked_queue(PCB* blocked_queue_head, PCB* pcb) { // sho
         iter = iter->pid_sibling_next;
     }
 
+    // ajouter pcb in the end
     iter->pid_sibling_next = pcb;
 
+    // the head is the same so returning it
     return blocked_queue_head;
 }
 
-PCB* op_delete_from_blocked_queue(PCB* blocked_queue_head, PCB* pcb) {
+
+PCB* op_delete_from_blocked_queue(PROCESS_MANAGER* self, PCB* pcb) {
+
+    PCB* blocked_queue_head = self->blocked_queue_head;
 
     if (blocked_queue_head == NULL) {
         return NULL;
@@ -479,7 +490,9 @@ PCB* op_delete_from_blocked_queue(PCB* blocked_queue_head, PCB* pcb) {
     return blocked_queue_head;
 }
 
-PCB* op_get_blocked_queue_element(PCB* blocked_queue_head, PCB* pcb) {
+PCB* op_get_blocked_queue_element(PROCESS_MANAGER* self, PCB* pcb) {
+
+    PCB* blocked_queue_head = self->blocked_queue_head;
 
     if (blocked_queue_head == NULL || pcb == NULL) {
         return blocked_queue_head;

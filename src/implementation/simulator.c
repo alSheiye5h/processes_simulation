@@ -236,6 +236,13 @@ WORK_RETURN op_simul_work(SIMULATOR* self, OPTIONS* options) {
     return WORK_DONE;
 }
 
+push_return op_simul_push_to_blocked_queue(SIMULATOR* self, PCB* pcb) {
+
+    return self->process_manager->add_process_to_blocked_queue(self->process_manager, pcb);
+}
+
+
+
 
 WORK_RETURN op_simul_init(SIMULATOR* self, FILE* buffer) {
 
